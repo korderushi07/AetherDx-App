@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'main_navigation_shell.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -203,7 +204,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 56,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Sign in action
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (_) => const MainNavigationShell()),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF111111),
@@ -248,7 +251,11 @@ class _LoginScreenState extends State<LoginScreen> {
               _buildSocialButton(
                 iconWidget: _buildGoogleLogo(),
                 label: 'Continue with Google',
-                onTap: () {},
+                onTap: () {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (_) => const MainNavigationShell()),
+                  );
+                },
               ),
               const SizedBox(height: 14),
 
@@ -256,7 +263,11 @@ class _LoginScreenState extends State<LoginScreen> {
               _buildSocialButton(
                 iconWidget: const Icon(Icons.apple, size: 24, color: Colors.black),
                 label: 'Continue with Apple',
-                onTap: () {},
+                onTap: () {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (_) => const MainNavigationShell()),
+                  );
+                },
               ),
               const SizedBox(height: 36),
 
