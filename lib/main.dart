@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF29A887),
           primary: const Color(0xFF29A887),
-          background: const Color(0xFF355456),
+          surface: const Color(0xFF355456),
         ),
         useMaterial3: true,
         fontFamily: 'Roboto', // Default flutter font, can be changed later
