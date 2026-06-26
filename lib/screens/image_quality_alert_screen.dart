@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:maroapp/core/theme/colors.dart';
+import 'package:maroapp/core/theme/typography.dart';
+import 'package:maroapp/core/theme/shadows.dart';
+import 'package:maroapp/core/theme/spacing.dart';
+import 'package:maroapp/core/widgets/app_button.dart';
+import 'package:maroapp/core/widgets/app_card.dart';
 
 class ImageQualityAlertScreen extends StatelessWidget {
   const ImageQualityAlertScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    const Color darkTeal = Color(0xFF1F484C);
-    const Color mutedText = Color(0xFF718096);
-
     return Scaffold(
-      backgroundColor: const Color(0xFFFCFDFF),
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.screenPadding,
+            vertical: AppSpacing.screenPadding,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -20,12 +26,7 @@ class ImageQualityAlertScreen extends StatelessWidget {
               // Header title
               const Text(
                 'Image Quality Alert',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w800,
-                  color: Color(0xFF1E293B),
-                  letterSpacing: -0.5,
-                ),
+                style: AppTypography.screenTitle,
               ),
               const SizedBox(height: 8),
               // Header description
@@ -36,7 +37,7 @@ class ImageQualityAlertScreen extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14,
-                    color: mutedText,
+                    color: AppColors.textSecondary,
                     height: 1.4,
                   ),
                 ),
@@ -44,14 +45,9 @@ class ImageQualityAlertScreen extends StatelessWidget {
               const SizedBox(height: 32),
 
               // Center Illustration Container
-              Container(
-                width: double.infinity,
+              AppCard(
+                backgroundColor: AppColors.secondaryBg,
                 height: 250,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF8FAFC),
-                  borderRadius: BorderRadius.circular(32),
-                  border: Border.all(color: const Color(0xFFF1F5F9)),
-                ),
                 child: Center(
                   child: SizedBox(
                     width: 200,
@@ -71,18 +67,12 @@ class ImageQualityAlertScreen extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: Colors.white,
                             shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.05),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
+                            boxShadow: [AppShadows.soft],
                           ),
                           child: const Icon(
                             Icons.phone_android_outlined,
                             size: 38,
-                            color: darkTeal,
+                            color: AppColors.primary,
                           ),
                         ),
                         // Top-Right Badge: Better Lighting (Angle: -45 deg)
@@ -117,21 +107,7 @@ class ImageQualityAlertScreen extends StatelessWidget {
               const SizedBox(height: 24),
 
               // Guidance List Card
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 22.0),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(color: const Color(0xFFF1F5F9)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.01),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
+              AppCard(
                 child: Column(
                   children: [
                     _buildGuidanceItem(
@@ -163,28 +139,10 @@ class ImageQualityAlertScreen extends StatelessWidget {
               const SizedBox(height: 32),
 
               // Try Again Button
-              SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton.icon(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.refresh_outlined, size: 20),
-                  label: const Text(
-                    'Try Again',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF1E1E1E),
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(28),
-                    ),
-                  ),
-                ),
+              AppButton(
+                onPressed: () => Navigator.of(context).pop(),
+                icon: Icons.refresh_outlined,
+                text: 'Try Again',
               ),
             ],
           ),
@@ -198,21 +156,15 @@ class ImageQualityAlertScreen extends StatelessWidget {
       width: 40,
       height: 40,
       decoration: BoxDecoration(
-        color: const Color(0xFFCBE5EE),
+        color: AppColors.secondaryBg,
         shape: BoxShape.circle,
         border: Border.all(color: Colors.white, width: 2),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 6,
-            offset: const Offset(0, 3),
-          ),
-        ],
+        boxShadow: [AppShadows.soft],
       ),
       child: Icon(
         icon,
         size: 20,
-        color: const Color(0xFF1F484C),
+        color: AppColors.primary,
       ),
     );
   }
@@ -227,12 +179,12 @@ class ImageQualityAlertScreen extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(10),
           decoration: const BoxDecoration(
-            color: Color(0xFFE4F3F5),
+            color: AppColors.secondaryBg,
             shape: BoxShape.circle,
           ),
           child: Icon(
             icon,
-            color: const Color(0xFF1F484C),
+            color: AppColors.primary,
             size: 20,
           ),
         ),
@@ -243,18 +195,15 @@ class ImageQualityAlertScreen extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w800,
-                  color: Color(0xFF1F484C),
+                style: AppTypography.cardTitle.copyWith(
+                  color: AppColors.primary,
                 ),
               ),
               const SizedBox(height: 2),
               Text(
                 description,
-                style: const TextStyle(
-                  fontSize: 13,
-                  color: Color(0xFF718096),
+                style: AppTypography.body.copyWith(
+                  color: AppColors.textSecondary,
                 ),
               ),
             ],
@@ -270,7 +219,7 @@ class _DashedCirclePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final double radius = size.width / 2;
     final Paint paint = Paint()
-      ..color = const Color(0xFFCBD5E1)
+      ..color = AppColors.placeholder
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.5;
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:maroapp/screens/splash_screen.dart';
+import 'package:maroapp/core/theme/app_theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -13,15 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Medcare App',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF29A887),
-          primary: const Color(0xFF29A887),
-          surface: const Color(0xFF355456),
-        ),
-        useMaterial3: true,
-        fontFamily: 'Roboto', // Default flutter font, can be changed later
-      ),
+      theme: AppTheme.lightTheme,
       home: const SplashScreen(),
     );
   }
