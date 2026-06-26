@@ -128,7 +128,7 @@ class _SplashScreenState extends State<SplashScreen> {
                       ),
                       const SizedBox(width: 15),
                       const Text(
-                        'Medcare',
+                        'AetherDx',
                         style: TextStyle(
                           fontSize: 32,
                           fontWeight: FontWeight.bold,
