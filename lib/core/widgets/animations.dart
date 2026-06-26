@@ -369,3 +369,158 @@ class PageTransitionBuilder extends PageTransitionsBuilder {
     );
   }
 }
+
+class AetherProgressRing extends StatefulWidget {
+  final double value; // 0.0 to 1.0
+  final double size;
+  final double strokeWidth;
+  final Color? color;
+  final Color? backgroundColor;
+  final Widget? child;
+
+  const AetherProgressRing({
+    super.key,
+    required this.value,
+    this.size = 180.0,
+    this.strokeWidth = 4.0,
+    this.color,
+    this.backgroundColor,
+    this.child,
+  });
+
+  @override
+  State<AetherProgressRing> createState() => _AetherProgressRingState();
+}
+
+class _AetherProgressRingState extends State<AetherProgressRing> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _animation;
+  double _prevValue = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    );
+    _animation = Tween<double>(begin: 0.0, end: widget.value).animate(
+      CurvedAnimation(parent: _controller, curve: AetherMotion.enter),
+    );
+    _controller.forward();
+    _prevValue = widget.value;
+  }
+
+  @override
+  void didUpdateWidget(covariant AetherProgressRing oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.value != widget.value) {
+      _animation = Tween<double>(begin: _prevValue, end: widget.value).animate(
+        CurvedAnimation(parent: _controller, curve: AetherMotion.enter),
+      );
+      _controller.reset();
+      _controller.forward();
+      _prevValue = widget.value;
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final reduced = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+    final displayValue = reduced ? widget.value : _animation.value;
+
+    final ringWidget = SizedBox(
+      width: widget.size,
+      height: widget.size,
+      child: CustomPaint(
+        painter: _ProgressRingPainter(
+          value: displayValue,
+          strokeWidth: widget.strokeWidth,
+          color: widget.color ?? AppColors.ai,
+          backgroundColor: widget.backgroundColor ?? AppColors.secondaryBg,
+        ),
+        child: widget.child != null ? Center(child: widget.child) : null,
+      ),
+    );
+
+    if (reduced) {
+      return ringWidget;
+    }
+
+    return AnimatedBuilder(
+      animation: _animation,
+      builder: (context, child) {
+        return SizedBox(
+          width: widget.size,
+          height: widget.size,
+          child: CustomPaint(
+            painter: _ProgressRingPainter(
+              value: _animation.value,
+              strokeWidth: widget.strokeWidth,
+              color: widget.color ?? AppColors.ai,
+              backgroundColor: widget.backgroundColor ?? AppColors.secondaryBg,
+            ),
+            child: widget.child != null ? Center(child: widget.child) : null,
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _ProgressRingPainter extends CustomPainter {
+  final double value;
+  final double strokeWidth;
+  final Color color;
+  final Color backgroundColor;
+
+  _ProgressRingPainter({
+    required this.value,
+    required this.strokeWidth,
+    required this.color,
+    required this.backgroundColor,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = (size.width - strokeWidth) / 2;
+
+    // Background track
+    final bgPaint = Paint()
+      ..color = backgroundColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth;
+    canvas.drawCircle(center, radius, bgPaint);
+
+    // Active track
+    final activePaint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
+      ..strokeCap = StrokeCap.round;
+
+    final sweepAngle = 2 * 3.1415926535 * value;
+    canvas.drawArc(
+      Rect.fromCircle(center: center, radius: radius),
+      -3.1415926535 / 2, // Start at the top (-90 degrees)
+      sweepAngle,
+      false,
+      activePaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _ProgressRingPainter oldDelegate) {
+    return oldDelegate.value != value ||
+        oldDelegate.strokeWidth != strokeWidth ||
+        oldDelegate.color != color ||
+        oldDelegate.backgroundColor != backgroundColor;
+  }
+}

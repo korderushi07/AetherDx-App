@@ -6,13 +6,11 @@ import 'package:maroapp/core/theme/spacing.dart';
 import 'package:maroapp/core/theme/radius.dart';
 import 'package:maroapp/core/widgets/app_button.dart';
 import 'package:maroapp/core/widgets/app_card.dart';
-import 'package:maroapp/core/widgets/section_title.dart';
 import 'package:maroapp/core/theme/motion.dart';
 import 'package:maroapp/core/widgets/animations.dart';
 import 'result_screen.dart';
-import 'educational_screen.dart';
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
   final VoidCallback onUploadNailImagePressed;
 
   const DashboardScreen({
@@ -20,14 +18,22 @@ class DashboardScreen extends StatelessWidget {
     required this.onUploadNailImagePressed,
   });
 
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  double _heroScale = 1.0;
+  bool _tipDismissed = false;
+
   String _getGreeting() {
     final hour = DateTime.now().hour;
     if (hour < 12) {
-      return 'Good Morning 👋';
+      return 'Good Morning';
     } else if (hour < 17) {
-      return 'Good Afternoon 👋';
+      return 'Good Afternoon';
     } else {
-      return 'Good Evening 👋';
+      return 'Good Evening';
     }
   }
 
@@ -46,271 +52,155 @@ class DashboardScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // 1. Smart AI Assistant Greeting
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      FadeSlideWidget(
-                        delay: const Duration(milliseconds: 60),
-                        slideDistance: -AetherMotion.slideDistanceSmall,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              _getGreeting(),
-                              style: AppTypography.caption,
-                            ),
-                            const SizedBox(height: AppSpacing.gapSmall),
-                            Text(
-                              appState.name,
-                              style: AppTypography.screenTitle,
-                            ),
-                            const SizedBox(height: AppSpacing.gapSmall),
-                            const Row(
-                              children: [
-                                Icon(Icons.auto_awesome_rounded, color: AppColors.primary, size: 14),
-                                SizedBox(width: 4),
-                                Text(
-                                  'AI Nail Health Assistant',
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.primary,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 2),
-                            const Text(
-                              'Ready to analyze your nail health.',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: AppColors.textSecondary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      // Circular Notification Icon (fades in, 0ms delay, no slide)
-                      FadeSlideWidget(
-                        delay: Duration.zero,
-                        slideDistance: 0,
-                        child: Stack(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: AppColors.cardBg,
-                                shape: BoxShape.circle,
-                                border: Border.all(color: const Color(0xFFE2E8F0)),
-                              ),
-                              child: const Icon(
-                                Icons.notifications_none_rounded,
-                                color: AppColors.textPrimary,
-                                size: 22,
-                              ),
-                            ),
-                            Positioned(
-                              right: 3,
-                              top: 3,
-                              child: Container(
-                                width: 8,
-                                height: 8,
-                                decoration: const BoxDecoration(
-                                  color: AppColors.error,
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.sectionSpace),
-
-                  // 2. Hero Section (AI Nail Scan)
+                  // 1. Unified Header Row
                   FadeSlideWidget(
-                    delay: const Duration(milliseconds: 120),
-                    slideDistance: AetherMotion.slideDistanceSmall,
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const EducationalScreen()),
-                        );
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: AppColors.secondaryBg,
-                          borderRadius: AppRadius.cardBorderRadius,
-                          border: Border.all(color: const Color(0xFFBBEBF2), width: 1.5),
-                        ),
-                        padding: const EdgeInsets.all(AppSpacing.cardInternalPadding),
-                        child: Row(
+                    delay: const Duration(milliseconds: 60),
+                    slideDistance: -AetherMotion.slideDistanceSmall,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
                           children: [
-                            Expanded(
-                              flex: 5,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // AI Powered Badges
-                                  Row(
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                        decoration: BoxDecoration(
-                                          color: AppColors.primary.withValues(alpha: 0.1),
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                        child: const Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Icon(Icons.verified, color: AppColors.primary, size: 10),
-                                            SizedBox(width: 4),
-                                            Text(
-                                              'AI Powered',
-                                              style: TextStyle(
-                                                fontSize: 9,
-                                                fontWeight: FontWeight.w800,
-                                                color: AppColors.primary,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white.withValues(alpha: 0.6),
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                        child: const Text(
-                                          'Est. Time: 5s',
-                                          style: TextStyle(
-                                            fontSize: 9,
-                                            fontWeight: FontWeight.w700,
-                                            color: AppColors.primary,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 12),
-                                  const Text(
-                                    'AI Nail Scan',
-                                    style: TextStyle(
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.w800,
-                                      color: AppColors.primary,
-                                      letterSpacing: -0.5,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 6),
-                                  const Text(
-                                    'Upload a nail image for instant AI disease detection.',
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: AppColors.primary,
-                                      height: 1.3,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 16),
-                                  AppButton(
-                                    text: 'Start AI Scan',
-                                    icon: Icons.camera_alt_outlined,
-                                    onPressed: onUploadNailImagePressed,
-                                  ),
-                                ],
+                            // 36px Circular user initials avatar
+                            Container(
+                              width: 36,
+                              height: 36,
+                              decoration: const BoxDecoration(
+                                color: AppColors.secondaryBg,
+                                shape: BoxShape.circle,
+                              ),
+                              alignment: Alignment.center,
+                              child: Text(
+                                appState.name.substring(0, 1),
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.primary,
+                                ),
                               ),
                             ),
                             const SizedBox(width: 12),
-                            // Compact Scanning Graphic Illustration
-                            Expanded(
-                              flex: 3,
-                              child: Container(
-                                height: 120,
-                                decoration: BoxDecoration(
-                                  borderRadius: AppRadius.imageBorderRadius,
-                                  color: Colors.white.withValues(alpha: 0.4),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${_getGreeting()}, ${appState.name}',
+                                  style: AppTypography.heading2.copyWith(fontWeight: FontWeight.w600),
                                 ),
-                                child: Stack(
+                                const SizedBox(height: 2),
+                                Row(
                                   children: [
-                                    ClipRRect(
-                                      borderRadius: AppRadius.imageBorderRadius,
-                                      child: Image.asset(
-                                        'assets/images/nail_scan_illustration.png',
-                                        width: double.infinity,
-                                        height: double.infinity,
-                                        fit: BoxFit.cover,
+                                    Container(
+                                      width: 6,
+                                      height: 6,
+                                      decoration: const BoxDecoration(
+                                        color: AppColors.ai,
+                                        shape: BoxShape.circle,
                                       ),
                                     ),
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: AppRadius.imageBorderRadius,
-                                        gradient: LinearGradient(
-                                          begin: Alignment.topCenter,
-                                          end: Alignment.bottomCenter,
-                                          colors: [
-                                            Colors.transparent,
-                                            AppColors.primary.withValues(alpha: 0.15),
-                                            Colors.transparent,
-                                          ],
-                                        ),
+                                    const SizedBox(width: 6),
+                                    const Text(
+                                      'AI Engine Ready',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColors.textSecondary,
                                       ),
                                     ),
                                   ],
                                 ),
-                              ),
+                              ],
                             ),
                           ],
+                        ),
+                        IconButton(
+                          icon: const Icon(
+                            Icons.notifications_none_rounded,
+                            color: AppColors.textPrimary,
+                            size: 24,
+                          ),
+                          onPressed: () {},
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.sectionSpace),
+
+                  // 2. Primary Hero Card (Start AI Scan)
+                  FadeSlideWidget(
+                    delay: const Duration(milliseconds: 120),
+                    child: GestureDetector(
+                      onTapDown: (_) => setState(() => _heroScale = 0.97),
+                      onTapUp: (_) {
+                        setState(() => _heroScale = 1.0);
+                        widget.onUploadNailImagePressed();
+                      },
+                      onTapCancel: () => setState(() => _heroScale = 1.0),
+                      child: AnimatedScale(
+                        scale: _heroScale,
+                        duration: const Duration(milliseconds: 120),
+                        curve: Curves.easeOutCubic,
+                        child: Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.symmetric(vertical: 36, horizontal: 24),
+                          decoration: BoxDecoration(
+                            color: AppColors.primary,
+                            borderRadius: AppRadius.cardBorderRadius,
+                            gradient: const RadialGradient(
+                              colors: [
+                                Color(0x1F6366F1), // Indigo overlay (12% opacity)
+                                AppColors.primary,
+                              ],
+                              radius: 0.8,
+                              center: Alignment.center,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color(0xFF0C4A6E).withOpacity(0.12),
+                                blurRadius: 20,
+                                offset: const Offset(0, 10),
+                              )
+                            ],
+                          ),
+                          child: const Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'START AI SCAN',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w800,
+                                  color: Colors.white,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                              SizedBox(height: 6),
+                              Text(
+                                'Analyze nail health instantly',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xFF93C5FD),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
                   const SizedBox(height: AppSpacing.sectionSpace),
 
-                  // Health Overview Heading
+                  // 3. Latest Analysis (Above the Fold)
                   FadeSlideWidget(
                     delay: const Duration(milliseconds: 180),
-                    child: const SectionTitle(title: 'Health Overview'),
-                  ),
-                  const SizedBox(height: AppSpacing.gapMedium),
-
-                  // Health Overview Stats Row 1
-                  FadeSlideWidget(
-                    delay: const Duration(milliseconds: 230),
-                    child: Row(
-                      children: [
-                        _buildStatCard('Current Risk', 'Low', AppColors.success, bg: const Color(0xFFDCFCE7)),
-                        const SizedBox(width: AppSpacing.cardSpace),
-                        _buildStatCard('Last Scan', 'Yesterday', AppColors.textPrimary),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.cardSpace),
-
-                  // Health Overview Stats Row 2
-                  FadeSlideWidget(
-                    delay: const Duration(milliseconds: 280),
-                    child: Row(
-                      children: [
-                        _buildStatCard('Total Scans', '12', AppColors.textPrimary),
-                        const SizedBox(width: AppSpacing.cardSpace),
-                        _buildStatCard('AI Accuracy', '99%', AppColors.primary, bg: AppColors.secondaryBg),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.sectionSpace),
-
-                  // Latest Analysis section
-                  FadeSlideWidget(
-                    delay: const Duration(milliseconds: 330),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SectionTitle(title: 'Latest Analysis'),
+                        const Text(
+                          'LATEST ANALYSIS',
+                          style: AppTypography.overline,
+                        ),
                         const SizedBox(height: AppSpacing.gapMedium),
                         if (!appState.hasScans)
                           _buildEmptyStateCard(context)
@@ -321,66 +211,69 @@ class DashboardScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: AppSpacing.sectionSpace),
 
-                  // AI Status Card
+                  // 4. Health Overview Stats
                   FadeSlideWidget(
-                    delay: const Duration(milliseconds: 380),
-                    child: _buildAIStatusCard(context, appState),
+                    delay: const Duration(milliseconds: 240),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'HEALTH OVERVIEW',
+                          style: AppTypography.overline,
+                        ),
+                        const SizedBox(height: AppSpacing.gapMedium),
+                        _buildHealthOverviewCard(appState),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.sectionSpace),
 
-                  // Daily Health Tip Card
-                  FadeSlideWidget(
-                    delay: const Duration(milliseconds: 430),
-                    child: _buildDailyTipCard(context),
-                  ),
-                  const SizedBox(height: AppSpacing.sectionSpace),
-
-                  // Recent Activity section
-                  if (appState.hasScans) ...[
+                  // 5. Daily Health Tip Alert Banner
+                  if (!_tipDismissed)
                     FadeSlideWidget(
-                      delay: const Duration(milliseconds: 480),
-                      child: const SectionTitle(title: 'Recent Activity'),
+                      delay: const Duration(milliseconds: 300),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: AppColors.secondaryBg,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: AppColors.border, width: 0.5),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.info_outline_rounded,
+                              color: AppColors.textPrimary,
+                              size: 16,
+                            ),
+                            const SizedBox(width: 8),
+                            const Expanded(
+                              child: Text(
+                                'Nail health tip: moisturize cuticles nightly to prevent splits.',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () => setState(() => _tipDismissed = true),
+                              child: const Icon(
+                                Icons.close_rounded,
+                                color: AppColors.textSecondary,
+                                size: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
-                    const SizedBox(height: AppSpacing.gapMedium),
-                    FadeSlideWidget(
-                      delay: const Duration(milliseconds: 530),
-                      child: _buildRecentActivitySection(),
-                    ),
-                  ],
                   const SizedBox(height: 80),
                 ],
               ),
             );
           },
-        ),
-      ),
-    );
-  }
-
-  // --- Widget helper builders ---
-
-  Widget _buildStatCard(String label, String value, Color textColor, {Color bg = Colors.white}) {
-    return Expanded(
-      child: AppCard(
-        backgroundColor: bg,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              label,
-              style: AppTypography.caption,
-            ),
-            const SizedBox(height: AppSpacing.gapSmall),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w800,
-                color: textColor,
-              ),
-            ),
-          ],
         ),
       ),
     );
@@ -393,18 +286,16 @@ class DashboardScreen extends StatelessWidget {
         children: [
           Row(
             children: [
-              // Image Thumbnail with rounded corners
               ClipRRect(
                 borderRadius: AppRadius.imageBorderRadius,
                 child: Image.asset(
                   'assets/images/nail_analysis_result.png',
-                  width: 64,
-                  height: 64,
+                  width: 60,
+                  height: 60,
                   fit: BoxFit.cover,
                 ),
               ),
               const SizedBox(width: 16),
-              // Disease Name & Date details
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -416,19 +307,28 @@ class DashboardScreen extends StatelessWidget {
                           'Fungal Infection',
                           style: AppTypography.cardTitle,
                         ),
-                        // Status badge (Mild)
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: const BoxDecoration(
-                            color: Color(0xFFFEF3C7),
-                            borderRadius: BorderRadius.all(Radius.circular(8)),
-                          ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => const ResultScreen(
+                                  conditionName: 'Fungal Infection',
+                                  matchPercentage: 92,
+                                  confidenceLabel: 'Mild',
+                                  description: 'A common fungal infection of the nail, causing discoloration, scaling, and thickening. It is often caused by dermatophytes.',
+                                  keySigns: 'Discoloration, scaling under the nail, thickening, and crumbly edges',
+                                  nextSteps: 'Consult a dermatologist to confirm diagnosis and obtain prescription antifungal medication',
+                                  careTips: 'Keep nails dry and clean, wear breathable socks, and avoid sharing nail clippers',
+                                ),
+                              ),
+                            );
+                          },
                           child: const Text(
-                            'Mild',
+                            'View →',
                             style: TextStyle(
-                              fontSize: 10,
+                              fontSize: 13,
                               fontWeight: FontWeight.w800,
-                              color: AppColors.warning,
+                              color: AppColors.primary,
                             ),
                           ),
                         ),
@@ -436,260 +336,91 @@ class DashboardScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     const Text(
-                      'Yesterday',
-                      style: AppTypography.caption,
-                    ),
-                    const SizedBox(height: 6),
-                    const Row(
-                      children: [
-                        Text(
-                          'CONFIDENCE',
-                          style: TextStyle(
-                            fontSize: 9,
-                            fontWeight: FontWeight.w800,
-                            color: AppColors.textSecondary,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                        SizedBox(width: 8),
-                        Text(
-                          '92%',
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w800,
-                            color: AppColors.primary,
-                          ),
-                        ),
-                      ],
+                      '92% Match Probability',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                   ],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 18),
-          // Animated horizontal progress indicator
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: const AnimatedProgressBar(
+          const SizedBox(height: 16),
+          const ClipRRect(
+            borderRadius: BorderRadius.all(Radius.circular(2)),
+            child: AnimatedProgressBar(
               value: 0.92,
-              minHeight: 8,
-              backgroundColor: Color(0xFFF1F5F9),
-              valueColor: AppColors.primary,
+              minHeight: 4,
+              backgroundColor: AppColors.secondaryBg,
+              valueColor: AppColors.ai,
             ),
-          ),
-          const SizedBox(height: 20),
-          // View Full Report button spanning full width
-          AppButton(
-            text: 'View Full Report',
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const ResultScreen(
-                    conditionName: 'Fungal Infection',
-                    matchPercentage: 92,
-                    confidenceLabel: 'Mild',
-                    description: 'A common fungal infection of the nail, causing discoloration, scaling, and thickening. It is often caused by dermatophytes.',
-                    keySigns: 'Discoloration, scaling under the nail, thickening, and crumbly edges',
-                    nextSteps: 'Consult a dermatologist to confirm diagnosis and obtain prescription antifungal medication',
-                    careTips: 'Keep nails dry and clean, wear breathable socks, and avoid sharing nail clippers',
-                  ),
-                ),
-              );
-            },
           ),
         ],
       ),
     );
   }
 
-  Widget _buildAIStatusCard(BuildContext context, AppState appState) {
+  Widget _buildHealthOverviewCard(AppState appState) {
     return AppCard(
+      padding: EdgeInsets.zero,
       child: Row(
         children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: const BoxDecoration(
-              color: AppColors.secondaryBg,
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.psychology_outlined,
-              color: AppColors.primary,
-              size: 24,
-            ),
-          ),
-          const SizedBox(width: 16),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'AI Assistant',
-                  style: AppTypography.cardTitle,
-                ),
-                const SizedBox(height: 2),
-                const Text(
-                  'Ready to Analyze',
-                  style: AppTypography.caption,
-                ),
-                const SizedBox(height: 4),
-                GestureDetector(
-                  onTap: () {
-                    appState.hasScans = !appState.hasScans;
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(appState.hasScans ? 'Switched to Analyzed State' : 'Switched to Onboarding Empty State'),
-                        duration: const Duration(seconds: 1),
-                      ),
-                    );
-                  },
-                  child: const Text(
-                    'Model: AtherDx AI v2  [tap to toggle]',
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.primary,
-                    ),
-                  ),
-                ),
-              ],
+            child: _buildMetricCell(
+              value: 'Low',
+              label: 'RISK LEVEL',
+              valueColor: AppColors.success,
             ),
           ),
-          // Live status pulse marker
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 8,
-                height: 8,
-                decoration: const BoxDecoration(
-                  color: AppColors.success,
-                  shape: BoxShape.circle,
-                ),
-              ),
-              const SizedBox(width: 6),
-              const Text(
-                'Online',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textSecondary,
-                ),
-              ),
-            ],
+          Container(width: 1, height: 48, color: AppColors.border),
+          Expanded(
+            child: _buildMetricCell(
+              value: appState.hasScans ? '12' : '0',
+              label: 'TOTAL SCANS',
+              valueColor: AppColors.textPrimary,
+            ),
+          ),
+          Container(width: 1, height: 48, color: AppColors.border),
+          Expanded(
+            child: _buildMetricCell(
+              value: '99%',
+              label: 'AI ACCURACY',
+              valueColor: AppColors.textPrimary,
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildDailyTipCard(BuildContext context) {
-    return AppCard(
+  Widget _buildMetricCell({
+    required String value,
+    required String label,
+    required Color valueColor,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Row(
-            children: [
-              Text(
-                '💡',
-                style: TextStyle(fontSize: 18),
-              ),
-              SizedBox(width: 8),
-              Text(
-                'Daily Nail Health Tip',
-                style: AppTypography.cardTitle,
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          const Text(
-            'Keep nails dry after washing to reduce fungal growth.',
+          Text(
+            value,
             style: TextStyle(
-              fontSize: 13.5,
-              color: AppColors.textSecondary,
-              height: 1.4,
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: valueColor,
             ),
           ),
-          const SizedBox(height: 14),
-          GestureDetector(
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const EducationalScreen()),
-              );
-            },
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  'Read More',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.primary,
-                  ),
-                ),
-                SizedBox(width: 4),
-                Icon(Icons.arrow_forward_rounded, size: 14, color: AppColors.primary),
-              ],
-            ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: AppTypography.overline.copyWith(fontSize: 9),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildRecentActivitySection() {
-    return AppCard(
-      child: Column(
-        children: [
-          _buildRecentActivityItem('Scan Completed', 'Yesterday'),
-          const Divider(color: Color(0xFFF1F5F9), thickness: 1.5, height: 24),
-          _buildRecentActivityItem('Report Downloaded', '3 days ago'),
-          const Divider(color: Color(0xFFF1F5F9), thickness: 1.5, height: 24),
-          _buildRecentActivityItem('Health Tip Viewed', '1 week ago'),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildRecentActivityItem(String title, String subtitle) {
-    return Row(
-      children: [
-        Container(
-          padding: const EdgeInsets.all(6),
-          decoration: BoxDecoration(
-            color: AppColors.success.withOpacity(0.1),
-            shape: BoxShape.circle,
-          ),
-          child: const Icon(
-            Icons.check,
-            color: AppColors.success,
-            size: 14,
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 13.5,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                subtitle,
-                style: AppTypography.caption,
-              ),
-            ],
-          ),
-        ),
-      ],
     );
   }
 
@@ -703,7 +434,7 @@ class DashboardScreen extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: const BoxDecoration(
-              color: Color(0xFFF1F5F9),
+              color: AppColors.secondaryBg,
               shape: BoxShape.circle,
             ),
             child: const Icon(
@@ -730,7 +461,7 @@ class DashboardScreen extends StatelessWidget {
           const SizedBox(height: 20),
           AppButton(
             text: 'Start First Scan',
-            onPressed: onUploadNailImagePressed,
+            onPressed: widget.onUploadNailImagePressed,
           ),
         ],
       ),

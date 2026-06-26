@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:maroapp/core/theme/colors.dart';
 import 'package:maroapp/core/theme/typography.dart';
 import 'package:maroapp/core/theme/radius.dart';
+import 'package:maroapp/core/theme/spacing.dart';
 import 'package:maroapp/core/widgets/app_bar.dart';
 import 'package:maroapp/core/widgets/app_button.dart';
 import 'package:maroapp/core/widgets/app_card.dart';
@@ -31,53 +32,69 @@ class ProfileScreen extends StatelessWidget {
           listenable: appState,
           builder: (context, _) {
             return SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.screenPadding,
+                vertical: 16.0,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const SizedBox(height: 16),
 
-                  // 2. Double-ring Profile Avatar
+                  // Profile Avatar: 72px circle with single 2px Indigo border
                   GestureDetector(
                     onTap: () => _showEditProfileSheet(context, appState),
                     child: Container(
-                      padding: const EdgeInsets.all(3),
-                      decoration: BoxDecoration(
+                      padding: const EdgeInsets.all(2),
+                      decoration: const BoxDecoration(
                         shape: BoxShape.circle,
-                        border: Border.all(color: const Color(0xFFE2E8F0), width: 1.5),
+                        color: Colors.transparent,
                       ),
                       child: Container(
-                        padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          border: Border.all(color: AppColors.primary, width: 2),
+                          border: Border.all(color: AppColors.ai, width: 2.0),
                         ),
-                        child: appState.buildAvatarWidget(50),
+                        child: appState.buildAvatarWidget(36), // 36 radius = 72 diameter
                       ),
                     ),
                   ),
                   const SizedBox(height: 16),
 
-                  // 3. Name & Username
+                  // Name & Username
                   Text(
                     appState.name,
-                    style: AppTypography.screenTitle.copyWith(fontSize: 22),
+                    style: AppTypography.heading2,
                   ),
                   const SizedBox(height: 4),
                   Text(
                     '@${appState.username}',
                     style: AppTypography.caption,
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 16),
 
-                  // 4. Edit Profile Button
-                  AppButton(
-                    text: 'Edit Profile',
-                    onPressed: () => _showEditProfileSheet(context, appState),
+                  // Edit Profile Button: Centered, Outlined/Secondary
+                  Center(
+                    child: SizedBox(
+                      width: 160,
+                      child: AppButton(
+                        text: 'Edit Profile',
+                        isPrimary: false,
+                        onPressed: () => _showEditProfileSheet(context, appState),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 32),
 
-                  // 5. Settings List Card Container
+                  // Settings Card
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'SETTINGS',
+                      style: AppTypography.overline,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
                   AppCard(
                     padding: EdgeInsets.zero,
                     child: Column(
@@ -89,6 +106,7 @@ class ProfileScreen extends StatelessWidget {
                           trailingText: appState.language,
                           onTap: () => _showLanguageSheet(context, appState),
                         ),
+                        const Divider(height: 1, color: Color(0xFFF1F5F9)),
                         _buildMenuItem(
                           context,
                           icon: Icons.notifications_none_rounded,
@@ -96,44 +114,54 @@ class ProfileScreen extends StatelessWidget {
                           trailingText: appState.pushNotifications ? 'On' : 'Off',
                           onTap: () => _showNotificationsSheet(context, appState),
                         ),
+                        const Divider(height: 1, color: Color(0xFFF1F5F9)),
                         _buildMenuItem(
                           context,
                           icon: Icons.sync_rounded,
-                          title: 'Offline Data & Sync',
+                          title: 'Data Sync',
                           trailingText: appState.lastSync == 'Just now' ? 'Synced' : appState.lastSync,
                           onTap: () => _showSyncSheet(context, appState),
-                        ),
-                        const Divider(
-                          color: Color(0xFFF1F5F9),
-                          thickness: 1.5,
-                          height: 1,
-                          indent: 16,
-                          endIndent: 16,
-                        ),
-                        _buildMenuItem(
-                          context,
-                          icon: Icons.help_outline_rounded,
-                          title: 'Help & Support',
-                          onTap: () => _showHelpSheet(context),
-                        ),
-                        _buildMenuItem(
-                          context,
-                          icon: Icons.logout_rounded,
-                          title: 'Log Out',
-                          textColor: AppColors.error,
-                          iconColor: AppColors.error,
-                          showChevron: false,
-                          onTap: () {
-                            Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(builder: (_) => const LoginScreen()),
-                              (route) => false,
-                            );
-                          },
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 80),
+                  const SizedBox(height: AppSpacing.sectionSpace),
+
+                  // Support Card
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'SUPPORT',
+                      style: AppTypography.overline,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  AppCard(
+                    padding: EdgeInsets.zero,
+                    child: _buildMenuItem(
+                      context,
+                      icon: Icons.help_outline_rounded,
+                      title: 'Help & Support',
+                      onTap: () => _showHelpSheet(context),
+                    ),
+                  ),
+                  const SizedBox(height: 48),
+
+                  // Standalone Log Out Button at the bottom
+                  AppButton(
+                    text: 'Log Out',
+                    isPrimary: false,
+                    backgroundColor: Colors.white,
+                    textColor: AppColors.error,
+                    borderColor: AppColors.error,
+                    onPressed: () {
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (_) => const LoginScreen()),
+                        (route) => false,
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 24),
                 ],
               ),
             );
@@ -149,20 +177,14 @@ class ProfileScreen extends StatelessWidget {
     required String title,
     required VoidCallback onTap,
     String? trailingText,
-    Color textColor = AppColors.textPrimary,
-    Color iconColor = AppColors.textPrimary,
     bool showChevron = true,
   }) {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 4.0),
-      leading: Icon(icon, color: iconColor, size: 22),
+      leading: Icon(icon, color: AppColors.textPrimary, size: 20),
       title: Text(
         title,
-        style: const TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.w700,
-          color: AppColors.textPrimary,
-        ),
+        style: AppTypography.cardTitle,
       ),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
@@ -224,11 +246,7 @@ class ProfileScreen extends StatelessWidget {
                         children: [
                           const Text(
                             'Edit Profile',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w800,
-                              color: Color(0xFF1E293B),
-                            ),
+                            style: AppTypography.heading2,
                           ),
                           IconButton(
                             icon: const Icon(Icons.close_rounded),
@@ -241,11 +259,7 @@ class ProfileScreen extends StatelessWidget {
                       // Avatar Selection
                       const Text(
                         'Choose Avatar',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textSecondary,
-                        ),
+                        style: AppTypography.cardTitle,
                       ),
                       const SizedBox(height: 12),
                       Row(
@@ -314,7 +328,7 @@ class ProfileScreen extends StatelessWidget {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: isSelected ? AppColors.primary : Colors.transparent,
+                                  color: isSelected ? AppColors.ai : Colors.transparent,
                                   width: 2.5,
                                 ),
                               ),
@@ -328,22 +342,30 @@ class ProfileScreen extends StatelessWidget {
                       // Name Field
                       const Text(
                         'Full Name',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary,
-                        ),
+                        style: AppTypography.cardTitle,
                       ),
                       const SizedBox(height: 8),
                       TextFormField(
                         controller: nameController,
                         decoration: InputDecoration(
                           hintText: 'Enter your name',
-                          fillColor: AppColors.background,
+                          fillColor: Colors.white,
                           filled: true,
-                          border: OutlineInputBorder(
+                          enabledBorder: OutlineInputBorder(
                             borderRadius: AppRadius.inputBorderRadius,
-                            borderSide: BorderSide.none,
+                            borderSide: const BorderSide(color: AppColors.border),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: AppRadius.inputBorderRadius,
+                            borderSide: const BorderSide(color: AppColors.primary),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderRadius: AppRadius.inputBorderRadius,
+                            borderSide: const BorderSide(color: AppColors.error),
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: AppRadius.inputBorderRadius,
+                            borderSide: const BorderSide(color: AppColors.error),
                           ),
                           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                         ),
@@ -359,24 +381,32 @@ class ProfileScreen extends StatelessWidget {
                       // Username Field
                       const Text(
                         'Username',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary,
-                        ),
+                        style: AppTypography.cardTitle,
                       ),
                       const SizedBox(height: 8),
                       TextFormField(
                         controller: usernameController,
                         decoration: InputDecoration(
                           hintText: 'Enter username',
-                          fillColor: AppColors.background,
+                          fillColor: Colors.white,
                           filled: true,
                           prefixText: '@',
                           prefixStyle: const TextStyle(color: AppColors.placeholder, fontWeight: FontWeight.bold),
-                          border: OutlineInputBorder(
+                          enabledBorder: OutlineInputBorder(
                             borderRadius: AppRadius.inputBorderRadius,
-                            borderSide: BorderSide.none,
+                            borderSide: const BorderSide(color: AppColors.border),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: AppRadius.inputBorderRadius,
+                            borderSide: const BorderSide(color: AppColors.primary),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderRadius: AppRadius.inputBorderRadius,
+                            borderSide: const BorderSide(color: AppColors.error),
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: AppRadius.inputBorderRadius,
+                            borderSide: const BorderSide(color: AppColors.error),
                           ),
                           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                         ),
@@ -395,11 +425,7 @@ class ProfileScreen extends StatelessWidget {
                       // Email Field
                       const Text(
                         'Email',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary,
-                        ),
+                        style: AppTypography.cardTitle,
                       ),
                       const SizedBox(height: 8),
                       TextFormField(
@@ -407,11 +433,23 @@ class ProfileScreen extends StatelessWidget {
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
                           hintText: 'Enter email address',
-                          fillColor: AppColors.background,
+                          fillColor: Colors.white,
                           filled: true,
-                          border: OutlineInputBorder(
+                          enabledBorder: OutlineInputBorder(
                             borderRadius: AppRadius.inputBorderRadius,
-                            borderSide: BorderSide.none,
+                            borderSide: const BorderSide(color: AppColors.border),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: AppRadius.inputBorderRadius,
+                            borderSide: const BorderSide(color: AppColors.primary),
+                          ),
+                          errorBorder: OutlineInputBorder(
+                            borderRadius: AppRadius.inputBorderRadius,
+                            borderSide: const BorderSide(color: AppColors.error),
+                          ),
+                          focusedErrorBorder: OutlineInputBorder(
+                            borderRadius: AppRadius.inputBorderRadius,
+                            borderSide: const BorderSide(color: AppColors.error),
                           ),
                           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                         ),
@@ -481,11 +519,7 @@ class ProfileScreen extends StatelessWidget {
                 children: [
                   const Text(
                     'Select Language',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.textPrimary,
-                    ),
+                    style: AppTypography.heading2,
                   ),
                   IconButton(
                     icon: const Icon(Icons.close_rounded),
@@ -552,11 +586,7 @@ class ProfileScreen extends StatelessWidget {
                     children: [
                       const Text(
                         'Notification Settings',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.textPrimary,
-                        ),
+                        style: AppTypography.heading2,
                       ),
                       IconButton(
                         icon: const Icon(Icons.close_rounded),
@@ -631,11 +661,7 @@ class ProfileScreen extends StatelessWidget {
                     children: [
                       const Text(
                         'Offline Data & Sync',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.textPrimary,
-                        ),
+                        style: AppTypography.heading2,
                       ),
                       IconButton(
                         icon: const Icon(Icons.close_rounded),
@@ -671,50 +697,22 @@ class ProfileScreen extends StatelessWidget {
                   const SizedBox(height: 24),
 
                   // Sync Now Button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 52,
-                    child: ElevatedButton(
-                      onPressed: appState.isSyncing
-                          ? null
-                          : () async {
-                              await appState.performSync();
-                              if (context.mounted) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Database synchronized successfully!'),
-                                    backgroundColor: AppColors.success,
-                                    duration: Duration(seconds: 2),
-                                  ),
-                                );
-                              }
-                            },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: AppRadius.buttonBorderRadius,
-                        ),
-                        disabledBackgroundColor: AppColors.primary.withValues(alpha: 0.5),
-                      ),
-                      child: appState.isSyncing
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2.5,
-                              ),
-                            )
-                          : const Text(
-                              'Sync Now',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                    ),
+                  AppButton(
+                    text: appState.isSyncing ? 'Syncing...' : 'Sync Now',
+                    onPressed: appState.isSyncing
+                        ? () {}
+                        : () async {
+                            await appState.performSync();
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Database synchronized successfully!'),
+                                  backgroundColor: AppColors.success,
+                                  duration: Duration(seconds: 2),
+                                ),
+                              );
+                            }
+                          },
                   ),
                 ],
               ),
@@ -732,12 +730,7 @@ class ProfileScreen extends StatelessWidget {
         children: [
           Text(
             label.toUpperCase(),
-            style: const TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.w800,
-              color: AppColors.placeholder,
-              letterSpacing: 0.5,
-            ),
+            style: AppTypography.overline,
           ),
           const SizedBox(height: 4),
           Text(
@@ -788,11 +781,7 @@ class ProfileScreen extends StatelessWidget {
                       children: [
                         const Text(
                           'Help & Support',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w800,
-                            color: AppColors.textPrimary,
-                          ),
+                          style: AppTypography.heading2,
                         ),
                         IconButton(
                           icon: const Icon(Icons.close_rounded),
@@ -844,11 +833,7 @@ class ProfileScreen extends StatelessWidget {
                             const SizedBox(height: 4),
                             const Text(
                               'Send a query directly to our support crew, and we will get back to you within 24 hours.',
-                              style: TextStyle(
-                                fontSize: 13,
-                                color: AppColors.textSecondary,
-                                height: 1.3,
-                              ),
+                              style: AppTypography.body,
                             ),
                             const SizedBox(height: 14),
                             TextField(
@@ -857,77 +842,53 @@ class ProfileScreen extends StatelessWidget {
                               decoration: InputDecoration(
                                 hintText: 'Describe your issue or feedback...',
                                 hintStyle: const TextStyle(color: AppColors.placeholder, fontSize: 14),
-                                fillColor: AppColors.background,
+                                fillColor: Colors.white,
                                 filled: true,
-                                border: OutlineInputBorder(
+                                enabledBorder: OutlineInputBorder(
                                   borderRadius: AppRadius.inputBorderRadius,
-                                  borderSide: BorderSide.none,
+                                  borderSide: const BorderSide(color: AppColors.border),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: AppRadius.inputBorderRadius,
+                                  borderSide: const BorderSide(color: AppColors.primary),
                                 ),
                                 contentPadding: const EdgeInsets.all(16),
                               ),
                             ),
                             const SizedBox(height: 18),
-                            SizedBox(
-                              width: double.infinity,
-                              height: 52,
-                              child: ElevatedButton(
-                                onPressed: isSubmitting
-                                    ? null
-                                    : () async {
-                                        if (supportController.text.trim().isEmpty) {
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            const SnackBar(
-                                              content: Text('Please write a message before sending.'),
-                                              backgroundColor: AppColors.error,
-                                            ),
-                                          );
-                                          return;
-                                        }
+                            AppButton(
+                              text: isSubmitting ? 'Submitting...' : 'Submit Ticket',
+                              onPressed: isSubmitting
+                                  ? () {}
+                                  : () async {
+                                      if (supportController.text.trim().isEmpty) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(
+                                            content: Text('Please write a message before sending.'),
+                                            backgroundColor: AppColors.error,
+                                          ),
+                                        );
+                                        return;
+                                      }
 
-                                        setSheetState(() {
-                                          isSubmitting = true;
-                                        });
+                                      setSheetState(() {
+                                        isSubmitting = true;
+                                      });
 
-                                        // Simulate submitting support ticket
-                                        await Future.delayed(const Duration(seconds: 1));
+                                      // Simulate submitting support ticket
+                                      await Future.delayed(const Duration(seconds: 1));
 
-                                        if (context.mounted) {
-                                          Navigator.pop(context);
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            const SnackBar(
-                                              content: Text('Support query sent! Check your inbox soon.'),
-                                              backgroundColor: AppColors.success,
-                                              duration: Duration(milliseconds: 2500),
-                                            ),
-                                          );
-                                        }
-                                      },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.primary,
-                                  foregroundColor: Colors.white,
-                                  elevation: 0,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: AppRadius.buttonBorderRadius,
-                                  ),
-                                  disabledBackgroundColor: AppColors.primary.withValues(alpha: 0.5),
-                                ),
-                                child: isSubmitting
-                                    ? const SizedBox(
-                                        width: 20,
-                                        height: 20,
-                                        child: CircularProgressIndicator(
-                                          color: Colors.white,
-                                          strokeWidth: 2.5,
-                                        ),
-                                      )
-                                    : const Text(
-                                        'Submit Ticket',
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                              ),
+                                      if (context.mounted) {
+                                        Navigator.pop(context);
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          const SnackBar(
+                                            content: Text('Support query sent! Check your inbox soon.'),
+                                            backgroundColor: AppColors.success,
+                                            duration: Duration(milliseconds: 2500),
+                                          ),
+                                        );
+                                      }
+                                    },
                             ),
                             const SizedBox(height: 12),
                           ],
@@ -976,11 +937,7 @@ class _FAQTileState extends State<FAQTile> {
           ListTile(
             title: Text(
               widget.question,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-                color: AppColors.textPrimary,
-              ),
+              style: AppTypography.cardTitle,
             ),
             trailing: Icon(
               _isExpanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
@@ -997,10 +954,8 @@ class _FAQTileState extends State<FAQTile> {
               padding: const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 16.0),
               child: Text(
                 widget.answer,
-                style: const TextStyle(
-                  fontSize: 13,
+                style: AppTypography.body.copyWith(
                   color: AppColors.textSecondary,
-                  height: 1.4,
                 ),
               ),
             ),
