@@ -94,6 +94,7 @@ class _SplashScreenState extends State<SplashScreen> {
               ],
             ),
           ),
+<<<<<<< HEAD
           // Bottom loading track
           Positioned(
             bottom: 0,
@@ -110,6 +111,68 @@ class _SplashScreenState extends State<SplashScreen> {
                   minHeight: 2,
                 );
               },
+=======
+
+          // Bottom White Section
+          Expanded(
+            flex: 25,
+            child: Container(
+              width: double.infinity,
+              color: Colors.white,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Custom Outlined Plus Logo
+                      SizedBox(
+                        width: 30,
+                        height: 30,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Container(
+                              width: 30,
+                              height: 10,
+                              decoration: BoxDecoration(
+                                border: Border.all(color: greenAccent, width: 2),
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                            ),
+                            Container(
+                              width: 10,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(color: greenAccent, width: 2),
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                            ),
+                            // Cover the middle intersection to make it hollow
+                            Container(
+                              width: 6,
+                              height: 6,
+                              color: Colors.white,
+                            )
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 15),
+                      const Text(
+                        'AetherDx',
+                        style: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          color: darkText,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+>>>>>>> 17c1a0314bf6f1d6978b570ff9f1c24b8c1fd90b
             ),
           ),
         ],
