@@ -1,4 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:maroapp/core/theme/colors.dart';
+import 'package:maroapp/core/theme/typography.dart';
+import 'package:maroapp/core/theme/radius.dart';
+import 'package:maroapp/core/theme/spacing.dart';
+import 'package:maroapp/core/widgets/app_bar.dart';
+import 'package:maroapp/core/widgets/app_button.dart';
+import 'package:maroapp/core/widgets/app_card.dart';
 
 class NutritionLifestyleScreen extends StatefulWidget {
   const NutritionLifestyleScreen({super.key});
@@ -24,7 +31,7 @@ class _NutritionLifestyleScreenState extends State<NutritionLifestyleScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Hydration goal reached! Keep it up! 💧'),
-          backgroundColor: Color(0xFF29A887),
+          backgroundColor: AppColors.success,
           duration: Duration(seconds: 2),
         ),
       );
@@ -33,116 +40,43 @@ class _NutritionLifestyleScreenState extends State<NutritionLifestyleScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const Color darkTeal = Color(0xFF0F3E42);
-    const Color slateText = Color(0xFF1E293B);
-    const Color mutedText = Color(0xFF64748B);
-    const Color lightBlueBg = Color(0xFFEAF8FA);
-    const Color accentBlue = Color(0xFF007E8A);
-
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: AppColors.background,
+      appBar: CustomAppBar(
+        title: 'Medcare',
+        onBackPressed: () => Navigator.of(context).pop(),
+        showNotification: true,
+      ),
       body: SafeArea(
         child: Column(
           children: [
-            // 1. Custom AppBar
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: const Color(0xFFE2E8F0)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.02),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.arrow_back_rounded,
-                        color: slateText,
-                        size: 20,
-                      ),
-                    ),
-                  ),
-                  const Text(
-                    'Medcare',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w900,
-                      color: darkTeal,
-                      letterSpacing: -0.8,
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: const Color(0xFFE2E8F0)),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.02),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.notifications_none_rounded,
-                      color: slateText,
-                      size: 20,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // 2. Scrollable Body
+            // 1. Scrollable Body
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.screenPadding),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const SizedBox(height: 12),
                     const Text(
                       'Nutrition & Lifestyle',
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w800,
-                        color: slateText,
-                        letterSpacing: -0.5,
-                      ),
+                      style: AppTypography.screenTitle,
                     ),
                     const SizedBox(height: 10),
                     const Text(
                       'Personalized recommendations for optimal nail and overall health based on your latest analysis.',
                       style: TextStyle(
                         fontSize: 14,
-                        color: mutedText,
+                        color: AppColors.textSecondary,
                         height: 1.4,
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: AppSpacing.sectionSpace),
 
                     // Card 1: Diet Suggestions
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: lightBlueBg,
-                        borderRadius: BorderRadius.circular(28),
-                        border: Border.all(color: const Color(0xFFD0ECF0), width: 1.5),
-                      ),
-                      padding: const EdgeInsets.all(20),
+                    AppCard(
+                      backgroundColor: AppColors.secondaryBg,
+                      padding: const EdgeInsets.all(AppSpacing.cardInternalPadding),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -156,7 +90,7 @@ class _NutritionLifestyleScreenState extends State<NutritionLifestyleScreen> {
                                 ),
                                 child: const Icon(
                                   Icons.restaurant_rounded,
-                                  color: accentBlue,
+                                  color: AppColors.primary,
                                   size: 18,
                                 ),
                               ),
@@ -166,18 +100,14 @@ class _NutritionLifestyleScreenState extends State<NutritionLifestyleScreen> {
                                 style: TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w800,
-                                  color: accentBlue,
+                                  color: AppColors.primary,
                                 ),
                               ),
                             ],
                           ),
                           const SizedBox(height: 20),
-                          Container(
-                            width: double.infinity,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
+                          AppCard(
+                            backgroundColor: Colors.white,
                             padding: const EdgeInsets.all(16),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -187,7 +117,7 @@ class _NutritionLifestyleScreenState extends State<NutritionLifestyleScreen> {
                                   style: TextStyle(
                                     fontSize: 10,
                                     fontWeight: FontWeight.w800,
-                                    color: Color(0xFF94A3B8),
+                                    color: AppColors.placeholder,
                                     letterSpacing: 0.5,
                                   ),
                                 ),
@@ -207,7 +137,7 @@ class _NutritionLifestyleScreenState extends State<NutritionLifestyleScreen> {
                                   'Incorporate more nuts, seeds, and leafy greens. Consider a biotin supplement to strengthen nail beds.',
                                   style: TextStyle(
                                     fontSize: 13.5,
-                                    color: slateText,
+                                    color: AppColors.textPrimary,
                                     height: 1.45,
                                   ),
                                 ),
@@ -217,24 +147,12 @@ class _NutritionLifestyleScreenState extends State<NutritionLifestyleScreen> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: AppSpacing.cardSpace),
 
                     // Card 2: Hydration Goal
-                    Container(
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(28),
-                        border: Border.all(color: const Color(0xFFF1F5F9), width: 1.5),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.02),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      padding: const EdgeInsets.all(20),
+                    AppCard(
+                      backgroundColor: Colors.white,
+                      padding: const EdgeInsets.all(AppSpacing.cardInternalPadding),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -246,12 +164,12 @@ class _NutritionLifestyleScreenState extends State<NutritionLifestyleScreen> {
                                   Container(
                                     padding: const EdgeInsets.all(10),
                                     decoration: const BoxDecoration(
-                                      color: Color(0xFFE0F2FE),
+                                      color: AppColors.secondaryBg,
                                       shape: BoxShape.circle,
                                     ),
                                     child: const Icon(
                                       Icons.water_drop_outlined,
-                                      color: Color(0xFF0284C7),
+                                      color: AppColors.primary,
                                       size: 18,
                                     ),
                                   ),
@@ -261,7 +179,7 @@ class _NutritionLifestyleScreenState extends State<NutritionLifestyleScreen> {
                                     style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w800,
-                                      color: slateText,
+                                      color: AppColors.textPrimary,
                                     ),
                                   ),
                                 ],
@@ -272,12 +190,12 @@ class _NutritionLifestyleScreenState extends State<NutritionLifestyleScreen> {
                                 child: Container(
                                   padding: const EdgeInsets.all(8),
                                   decoration: const BoxDecoration(
-                                    color: Color(0xFFF1F5F9),
+                                    color: AppColors.secondaryBg,
                                     shape: BoxShape.circle,
                                   ),
                                   child: const Icon(
                                     Icons.add,
-                                    color: slateText,
+                                    color: AppColors.primary,
                                     size: 18,
                                   ),
                                 ),
@@ -289,7 +207,7 @@ class _NutritionLifestyleScreenState extends State<NutritionLifestyleScreen> {
                             'Dehydration directly impacts nail brittleness. Aim for 2.5L daily.',
                             style: TextStyle(
                               fontSize: 13,
-                              color: mutedText,
+                              color: AppColors.textSecondary,
                               height: 1.4,
                             ),
                           ),
@@ -299,8 +217,8 @@ class _NutritionLifestyleScreenState extends State<NutritionLifestyleScreen> {
                             borderRadius: BorderRadius.circular(4),
                             child: LinearProgressIndicator(
                               value: _loggedWater / _waterGoal,
-                              backgroundColor: const Color(0xFFF1F5F9),
-                              color: accentBlue,
+                              backgroundColor: AppColors.secondaryBg,
+                              color: AppColors.primary,
                               minHeight: 8,
                             ),
                           ),
@@ -314,7 +232,7 @@ class _NutritionLifestyleScreenState extends State<NutritionLifestyleScreen> {
                                 style: const TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w700,
-                                  color: Color(0xFF94A3B8),
+                                  color: AppColors.placeholder,
                                 ),
                               ),
                               Text(
@@ -322,7 +240,7 @@ class _NutritionLifestyleScreenState extends State<NutritionLifestyleScreen> {
                                 style: const TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.w700,
-                                  color: Color(0xFF94A3B8),
+                                  color: AppColors.placeholder,
                                 ),
                               ),
                             ],
@@ -330,7 +248,7 @@ class _NutritionLifestyleScreenState extends State<NutritionLifestyleScreen> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: AppSpacing.cardSpace),
 
                     // Card 3 & 4 Lifestyle columns (Alcohol & Cuticle Care)
                     Row(
@@ -342,7 +260,7 @@ class _NutritionLifestyleScreenState extends State<NutritionLifestyleScreen> {
                             height: 180,
                             decoration: BoxDecoration(
                               color: const Color(0xFFFFF5F5),
-                              borderRadius: BorderRadius.circular(24),
+                              borderRadius: AppRadius.cardBorderRadius,
                               border: Border.all(color: const Color(0xFFFEE2E2), width: 1.5),
                             ),
                             padding: const EdgeInsets.all(16),
@@ -357,7 +275,7 @@ class _NutritionLifestyleScreenState extends State<NutritionLifestyleScreen> {
                                   ),
                                   child: const Icon(
                                     Icons.wine_bar_outlined,
-                                    color: Color(0xFFEF4444),
+                                    color: AppColors.error,
                                     size: 18,
                                   ),
                                 ),
@@ -367,7 +285,7 @@ class _NutritionLifestyleScreenState extends State<NutritionLifestyleScreen> {
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w800,
-                                    color: slateText,
+                                    color: AppColors.textPrimary,
                                   ),
                                 ),
                                 const SizedBox(height: 8),
@@ -378,7 +296,7 @@ class _NutritionLifestyleScreenState extends State<NutritionLifestyleScreen> {
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
                                       fontSize: 11.5,
-                                      color: mutedText,
+                                      color: AppColors.textSecondary,
                                       height: 1.35,
                                     ),
                                   ),
@@ -390,20 +308,8 @@ class _NutritionLifestyleScreenState extends State<NutritionLifestyleScreen> {
                         const SizedBox(width: 14),
                         // Card 4: Cuticle Care
                         Expanded(
-                          child: Container(
+                          child: AppCard(
                             height: 180,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(24),
-                              border: Border.all(color: const Color(0xFFF1F5F9), width: 1.5),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withValues(alpha: 0.02),
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 4),
-                                ),
-                              ],
-                            ),
                             padding: const EdgeInsets.all(16),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -426,7 +332,7 @@ class _NutritionLifestyleScreenState extends State<NutritionLifestyleScreen> {
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w800,
-                                    color: slateText,
+                                    color: AppColors.textPrimary,
                                   ),
                                 ),
                                 const SizedBox(height: 8),
@@ -437,7 +343,7 @@ class _NutritionLifestyleScreenState extends State<NutritionLifestyleScreen> {
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
                                       fontSize: 11.5,
-                                      color: mutedText,
+                                      color: AppColors.textSecondary,
                                       height: 1.35,
                                     ),
                                   ),
@@ -448,33 +354,21 @@ class _NutritionLifestyleScreenState extends State<NutritionLifestyleScreen> {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: AppSpacing.sectionSpace),
 
                     // Log Daily Habits Button
-                    SizedBox(
-                      width: double.infinity,
-                      height: 54,
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Daily habits successfully logged! 🌟'),
-                              backgroundColor: Color(0xFF29A887),
-                              duration: Duration(seconds: 2),
-                            ),
-                          );
-                        },
-                        icon: const Icon(Icons.edit_note_rounded, size: 20),
-                        label: const Text('Log Daily Habits'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF1E1E24),
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(27),
+                    AppButton(
+                      text: 'Log Daily Habits',
+                      icon: Icons.edit_note_rounded,
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Daily habits successfully logged! 🌟'),
+                            backgroundColor: AppColors.success,
+                            duration: Duration(seconds: 2),
                           ),
-                        ),
-                      ),
+                        );
+                      },
                     ),
                     const SizedBox(height: 40),
                   ],
@@ -482,7 +376,7 @@ class _NutritionLifestyleScreenState extends State<NutritionLifestyleScreen> {
               ),
             ),
 
-            // 3. Bottom Navigation Bar Container
+            // 2. Bottom Navigation Bar Container
             Container(
               margin: const EdgeInsets.fromLTRB(24, 0, 24, 24),
               padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -552,12 +446,12 @@ class _NutritionLifestyleScreenState extends State<NutritionLifestyleScreen> {
         curve: Curves.easeInOut,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF49C3DF) : Colors.transparent,
+          color: isSelected ? AppColors.primary : Colors.transparent,
           shape: BoxShape.circle,
         ),
         child: Icon(
           icon,
-          color: isSelected ? const Color(0xFF22252A) : const Color(0xFF90A4AE),
+          color: isSelected ? Colors.white : const Color(0xFF94A3B8),
           size: 24,
         ),
       ),

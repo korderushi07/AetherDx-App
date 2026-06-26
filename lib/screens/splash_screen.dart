@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:maroapp/core/theme/colors.dart';
 import 'login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -23,9 +24,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const Color darkBg = Color(0xFF355456);
-    const Color greenAccent = Color(0xFF29A887);
-    const Color darkText = Color(0xFF224345);
+    const Color darkBg = AppColors.primary;
+    const Color greenAccent = AppColors.secondaryBg;
+    const Color darkText = AppColors.textPrimary;
 
     return Scaffold(
       backgroundColor: darkBg,
@@ -154,8 +155,8 @@ class _SplashIllustrationPainter extends CustomPainter {
     final double w = size.width;
     final double h = size.height;
 
-    final Paint paintDarkBg = Paint()..color = const Color(0xFF355456);
-    final Paint paintGreen = Paint()..color = const Color(0xFF29A887);
+    final Paint paintDarkBg = Paint()..color = AppColors.primary;
+    final Paint paintGreen = Paint()..color = AppColors.secondaryBg;
     final Paint paintPeach = Paint()..color = const Color(0xFFFBE0D0);
     final Paint paintWhite = Paint()..color = Colors.white;
 

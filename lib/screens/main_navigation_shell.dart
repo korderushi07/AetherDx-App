@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../core/theme/colors.dart';
 import 'dashboard_screen.dart';
 import 'scan_nail_screen.dart';
 import 'history_screen.dart';
@@ -60,7 +61,7 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
     }
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFCFDFF),
+      backgroundColor: AppColors.background,
       body: body,
       bottomNavigationBar: Container(
         margin: const EdgeInsets.fromLTRB(24, 0, 24, 24),
@@ -79,10 +80,10 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildNavItem(0, _currentIndex == 0 ? Icons.home : Icons.home_outlined),
-            _buildNavItem(1, Icons.history),
-            _buildNavItem(2, _currentIndex == 2 ? Icons.calendar_today : Icons.calendar_today_outlined),
-            _buildNavItem(3, _currentIndex == 3 ? Icons.person : Icons.person_outline),
+            _buildNavItem(0, _currentIndex == 0 ? Icons.home_rounded : Icons.home_outlined),
+            _buildNavItem(1, _currentIndex == 1 ? Icons.qr_code_scanner_rounded : Icons.qr_code_scanner_outlined),
+            _buildNavItem(2, _currentIndex == 2 ? Icons.assignment_rounded : Icons.assignment_outlined),
+            _buildNavItem(3, _currentIndex == 3 ? Icons.person_rounded : Icons.person_outline),
           ],
         ),
       ),
@@ -102,12 +103,12 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
         curve: Curves.easeInOut,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF49C3DF) : Colors.transparent,
+          color: isSelected ? AppColors.primary : Colors.transparent,
           shape: BoxShape.circle,
         ),
         child: Icon(
           icon,
-          color: isSelected ? const Color(0xFF22252A) : const Color(0xFF90A4AE),
+          color: isSelected ? Colors.white : const Color(0xFF94A3B8),
           size: 24,
         ),
       ),

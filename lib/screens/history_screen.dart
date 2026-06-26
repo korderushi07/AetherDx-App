@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:maroapp/core/theme/colors.dart';
+import 'package:maroapp/core/theme/typography.dart';
+import 'package:maroapp/core/widgets/app_bar.dart';
+import 'package:maroapp/core/widgets/app_card.dart';
 import 'result_screen.dart';
 
 class HistoryScreen extends StatelessWidget {
@@ -11,11 +15,6 @@ class HistoryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const Color darkTeal = Color(0xFF1F484C);
-    const Color slateText = Color(0xFF1E293B);
-    const Color mutedText = Color(0xFF64748B);
-    const Color borderGrey = Color(0xFFF1F5F9);
-
     final List<Map<String, dynamic>> historyData = [
       {
         'date': 'Nov 1, 2025',
@@ -23,8 +22,8 @@ class HistoryScreen extends StatelessWidget {
         'confidence': '92%',
         'region': 'Left Index Finger',
         'action': 'Topical Antifungal',
-        'titleColor': const Color(0xFF1F484C),
-        'badgeBg': const Color(0xFF1F484C),
+        'titleColor': AppColors.primary,
+        'badgeBg': AppColors.primary,
         'badgeText': Colors.white,
         'reportParams': {
           'conditionName': 'Fungal Infection',
@@ -42,9 +41,9 @@ class HistoryScreen extends StatelessWidget {
         'confidence': '98%',
         'region': 'Right Thumb',
         'action': 'Routine Care',
-        'titleColor': slateText,
-        'badgeBg': const Color(0xFFE2E8F0),
-        'badgeText': slateText,
+        'titleColor': AppColors.textPrimary,
+        'badgeBg': AppColors.secondaryBg,
+        'badgeText': AppColors.primary,
         'reportParams': {
           'conditionName': 'Healthy Nail',
           'matchPercentage': 98,
@@ -63,7 +62,7 @@ class HistoryScreen extends StatelessWidget {
         'action': 'Dermatologist Consult',
         'titleColor': const Color(0xFF8C5333),
         'badgeBg': const Color(0xFFFEE2E2),
-        'badgeText': const Color(0xFF991B1B),
+        'badgeText': AppColors.error,
         'reportParams': {
           'conditionName': 'Nail Psoriasis',
           'matchPercentage': 85,
@@ -77,84 +76,15 @@ class HistoryScreen extends StatelessWidget {
     ];
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: AppColors.background,
+      appBar: CustomAppBar(
+        title: 'Analysis History',
+        onBackPressed: onBackPressed,
+        showNotification: true,
+      ),
       body: SafeArea(
         child: Column(
           children: [
-            // 1. Header Row (Back, Title, Notification Bell)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Back Button
-                  GestureDetector(
-                    onTap: onBackPressed,
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: const Color(0xFFE2E8F0)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.02),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.arrow_back_ios_new_rounded,
-                        color: slateText,
-                        size: 20,
-                      ),
-                    ),
-                  ),
-                  // Title
-                  const Text(
-                    'Analysis History',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w800,
-                      color: slateText,
-                      letterSpacing: -0.5,
-                    ),
-                  ),
-                  // Bell Notification Icon
-                  Stack(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: const Color(0xFFE2E8F0)),
-                        ),
-                        child: const Icon(
-                          Icons.notifications_outlined,
-                          color: slateText,
-                          size: 20,
-                        ),
-                      ),
-                      Positioned(
-                        right: 2,
-                        top: 2,
-                        child: Container(
-                          width: 8,
-                          height: 8,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFFEF4444),
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
             // 2. Action Filter Bar
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
@@ -165,7 +95,7 @@ class HistoryScreen extends StatelessWidget {
                     'Showing all past nail analysis entries',
                     style: TextStyle(
                       fontSize: 13,
-                      color: mutedText,
+                      color: AppColors.textSecondary,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -176,12 +106,12 @@ class HistoryScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(color: const Color(0xFFE2E8F0)),
                     ),
-                    child: Row(
+                    child: const Row(
                       mainAxisSize: MainAxisSize.min,
-                      children: const [
+                      children: [
                         Icon(
                           Icons.filter_list_rounded,
-                          color: slateText,
+                          color: AppColors.textPrimary,
                           size: 16,
                         ),
                         SizedBox(width: 6),
@@ -190,7 +120,7 @@ class HistoryScreen extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w800,
-                            color: slateText,
+                            color: AppColors.textPrimary,
                           ),
                         ),
                       ],
@@ -254,7 +184,7 @@ class HistoryScreen extends StatelessWidget {
                                           color: Colors.white,
                                           shape: BoxShape.circle,
                                           border: Border.all(
-                                            color: darkTeal,
+                                            color: AppColors.primary,
                                             width: 4,
                                           ),
                                         ),
@@ -284,40 +214,27 @@ class HistoryScreen extends StatelessWidget {
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w800,
-                                  color: slateText,
+                                  color: AppColors.textPrimary,
                                 ),
                               ),
                               const SizedBox(height: 10),
 
                               // Report Card
-                              Container(
-                                width: double.infinity,
+                              AppCard(
                                 padding: const EdgeInsets.all(20.0),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(24),
-                                  border: Border.all(color: borderGrey, width: 1.5),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withValues(alpha: 0.02),
-                                      blurRadius: 10,
-                                      offset: const Offset(0, 4),
-                                    ),
-                                  ],
-                                ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     // Row 1: Upper labels
-                                    Row(
+                                    const Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: const [
+                                      children: [
                                         Text(
                                           'CONDITION DETECTED',
                                           style: TextStyle(
                                             fontSize: 10,
                                             fontWeight: FontWeight.w700,
-                                            color: Color(0xFF94A3B8),
+                                            color: AppColors.placeholder,
                                             letterSpacing: 0.5,
                                           ),
                                         ),
@@ -326,7 +243,7 @@ class HistoryScreen extends StatelessWidget {
                                           style: TextStyle(
                                             fontSize: 10,
                                             fontWeight: FontWeight.w700,
-                                            color: Color(0xFF94A3B8),
+                                            color: AppColors.placeholder,
                                             letterSpacing: 0.5,
                                           ),
                                         ),
@@ -367,7 +284,7 @@ class HistoryScreen extends StatelessWidget {
                                       ],
                                     ),
                                     const Divider(
-                                      color: borderGrey,
+                                      color: AppColors.secondaryBg,
                                       thickness: 1.5,
                                       height: 24,
                                     ),
@@ -381,11 +298,7 @@ class HistoryScreen extends StatelessWidget {
                                           children: [
                                             const Text(
                                               'Analyzed Region',
-                                              style: TextStyle(
-                                                fontSize: 11,
-                                                color: mutedText,
-                                                fontWeight: FontWeight.w500,
-                                              ),
+                                              style: AppTypography.caption,
                                             ),
                                             const SizedBox(height: 4),
                                             Text(
@@ -393,7 +306,7 @@ class HistoryScreen extends StatelessWidget {
                                               style: const TextStyle(
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.w700,
-                                                color: slateText,
+                                                color: AppColors.textPrimary,
                                               ),
                                             ),
                                           ],
@@ -403,11 +316,7 @@ class HistoryScreen extends StatelessWidget {
                                           children: [
                                             const Text(
                                               'Recommended Action',
-                                              style: TextStyle(
-                                                fontSize: 11,
-                                                color: mutedText,
-                                                fontWeight: FontWeight.w500,
-                                              ),
+                                              style: AppTypography.caption,
                                             ),
                                             const SizedBox(height: 4),
                                             Text(
@@ -415,7 +324,7 @@ class HistoryScreen extends StatelessWidget {
                                               style: const TextStyle(
                                                 fontSize: 13,
                                                 fontWeight: FontWeight.w700,
-                                                color: slateText,
+                                                color: AppColors.textPrimary,
                                               ),
                                             ),
                                           ],
@@ -423,7 +332,7 @@ class HistoryScreen extends StatelessWidget {
                                       ],
                                     ),
                                     const Divider(
-                                      color: borderGrey,
+                                      color: AppColors.secondaryBg,
                                       thickness: 1.5,
                                       height: 24,
                                     ),
@@ -446,21 +355,21 @@ class HistoryScreen extends StatelessWidget {
                                           ),
                                         );
                                       },
-                                      child: Row(
+                                      child: const Row(
                                         mainAxisAlignment: MainAxisAlignment.end,
-                                        children: const [
+                                        children: [
                                           Text(
                                             'View full report',
                                             style: TextStyle(
                                               fontSize: 13,
                                               fontWeight: FontWeight.w800,
-                                              color: darkTeal,
+                                              color: AppColors.primary,
                                             ),
                                           ),
                                           SizedBox(width: 4),
                                           Icon(
                                             Icons.chevron_right_rounded,
-                                            color: darkTeal,
+                                            color: AppColors.primary,
                                             size: 16,
                                           ),
                                         ],

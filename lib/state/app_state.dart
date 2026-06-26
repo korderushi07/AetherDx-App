@@ -13,8 +13,18 @@ class AppState extends ChangeNotifier {
   factory AppState() => _instance;
   AppState._internal();
 
+  // App Settings / Stats
+  bool _hasScans = true;
+  bool get hasScans => _hasScans;
+  set hasScans(bool value) {
+    if (_hasScans != value) {
+      _hasScans = value;
+      notifyListeners();
+    }
+  }
+
   // User Profile
-  String _name = 'Valentina Miller';
+  String _name = 'Rushikesh';
   String get name => _name;
   set name(String value) {
     if (_name != value) {
@@ -23,7 +33,7 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  String _username = 'valentina';
+  String _username = 'rushikesh';
   String get username => _username;
   set username(String value) {
     if (_username != value) {
@@ -32,7 +42,7 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  String _email = 'valentina.miller@example.com';
+  String _email = 'rushikesh@example.com';
   String get email => _email;
   set email(String value) {
     if (_email != value) {

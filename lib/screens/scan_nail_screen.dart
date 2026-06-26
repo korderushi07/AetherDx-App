@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:maroapp/core/theme/colors.dart';
+import 'package:maroapp/core/theme/typography.dart';
+import 'package:maroapp/core/theme/radius.dart';
+import 'package:maroapp/core/widgets/app_button.dart';
+import 'package:maroapp/core/widgets/app_card.dart';
 import 'image_quality_alert_screen.dart';
 import 'analyzing_nail_screen.dart';
 
@@ -37,7 +42,7 @@ class _ScanNailScreenState extends State<ScanNailScreen> with SingleTickerProvid
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFCFDFF),
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
@@ -66,25 +71,20 @@ class _ScanNailScreenState extends State<ScanNailScreen> with SingleTickerProvid
                         ],
                       ),
                       child: const Icon(
-                        Icons.arrow_back_ios_new_rounded,
-                        color: Color(0xFF1E293B),
+                        Icons.arrow_back_rounded,
+                        color: AppColors.textPrimary,
                         size: 20,
                       ),
                     ),
                   ),
                   // Title Header
-                  Expanded(
+                  const Expanded(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
-                      children: const [
+                      children: [
                         Text(
                           'Scan Nail',
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w800,
-                            color: Color(0xFF1F484C),
-                            letterSpacing: -0.5,
-                          ),
+                          style: AppTypography.screenTitle,
                         ),
                         SizedBox(height: 4),
                         Padding(
@@ -94,7 +94,7 @@ class _ScanNailScreenState extends State<ScanNailScreen> with SingleTickerProvid
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 13,
-                              color: Color(0xFF64748B),
+                              color: AppColors.textSecondary,
                               height: 1.3,
                             ),
                           ),
@@ -119,7 +119,7 @@ class _ScanNailScreenState extends State<ScanNailScreen> with SingleTickerProvid
                     ),
                     child: const Icon(
                       Icons.help_outline_rounded,
-                      color: Color(0xFF1E293B),
+                      color: AppColors.textPrimary,
                       size: 20,
                     ),
                   ),
@@ -132,8 +132,8 @@ class _ScanNailScreenState extends State<ScanNailScreen> with SingleTickerProvid
                 width: double.infinity,
                 padding: const EdgeInsets.all(24.0),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE4F3F5),
-                  borderRadius: BorderRadius.circular(28),
+                  color: AppColors.secondaryBg,
+                  borderRadius: AppRadius.cardBorderRadius,
                 ),
                 child: Center(
                   child: Container(
@@ -141,10 +141,10 @@ class _ScanNailScreenState extends State<ScanNailScreen> with SingleTickerProvid
                     height: 230,
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(28),
+                      borderRadius: AppRadius.cardBorderRadius,
                     ),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(28),
+                      borderRadius: AppRadius.cardBorderRadius,
                       child: Stack(
                         children: [
                           // 1. Centered Nail Image
@@ -163,7 +163,7 @@ class _ScanNailScreenState extends State<ScanNailScreen> with SingleTickerProvid
                               builder: (context, constraints) {
                                 final double bracketSize = 24.0;
                                 final double stroke = 4.0;
-                                const Color bracketColor = Color(0xFF3E9BB0);
+                                const Color bracketColor = AppColors.primary;
 
                                 return Stack(
                                   children: [
@@ -248,10 +248,10 @@ class _ScanNailScreenState extends State<ScanNailScreen> with SingleTickerProvid
                                           child: Container(
                                             height: 3,
                                             decoration: BoxDecoration(
-                                              color: const Color(0xFF49C3DF),
+                                              color: AppColors.primary,
                                               boxShadow: [
                                                 BoxShadow(
-                                                  color: const Color(0xFF49C3DF).withValues(alpha: 0.8),
+                                                  color: AppColors.primary.withValues(alpha: 0.8),
                                                   blurRadius: 8,
                                                   spreadRadius: 2,
                                                 ),
@@ -275,21 +275,7 @@ class _ScanNailScreenState extends State<ScanNailScreen> with SingleTickerProvid
               const SizedBox(height: 20),
 
               // Instructions Panel Card
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 22.0),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(24),
-                  border: Border.all(color: const Color(0xFFF1F5F9)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.01),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
+              AppCard(
                 child: Column(
                   children: [
                     // Good Lighting Instruction row
@@ -298,34 +284,30 @@ class _ScanNailScreenState extends State<ScanNailScreen> with SingleTickerProvid
                         Container(
                           padding: const EdgeInsets.all(10),
                           decoration: const BoxDecoration(
-                            color: Color(0xFFE4F3F5),
+                            color: AppColors.secondaryBg,
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(
                             Icons.wb_sunny_outlined,
-                            color: Color(0xFF1F484C),
+                            color: AppColors.primary,
                             size: 20,
                           ),
                         ),
                         const SizedBox(width: 14),
-                        Expanded(
+                        const Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
+                            children: [
                               Text(
                                 'Good Lighting',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w800,
-                                  color: Color(0xFF1F484C),
-                                ),
+                                style: AppTypography.cardTitle,
                               ),
                               SizedBox(height: 2),
                               Text(
                                 'Use natural light for better results',
                                 style: TextStyle(
                                   fontSize: 13,
-                                  color: Color(0xFF718096),
+                                  color: AppColors.textSecondary,
                                 ),
                               ),
                             ],
@@ -343,34 +325,30 @@ class _ScanNailScreenState extends State<ScanNailScreen> with SingleTickerProvid
                         Container(
                           padding: const EdgeInsets.all(10),
                           decoration: const BoxDecoration(
-                            color: Color(0xFFE4F3F5),
+                            color: AppColors.secondaryBg,
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(
                             Icons.back_hand_outlined,
-                            color: Color(0xFF1F484C),
+                            color: AppColors.primary,
                             size: 20,
                           ),
                         ),
                         const SizedBox(width: 14),
-                        Expanded(
+                        const Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
+                            children: [
                               Text(
                                 'Keep Steady',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w800,
-                                  color: Color(0xFF1F484C),
-                                ),
+                                style: AppTypography.cardTitle,
                               ),
                               SizedBox(height: 2),
                               Text(
                                 'Hold your phone steady and clear',
                                 style: TextStyle(
                                   fontSize: 13,
-                                  color: Color(0xFF718096),
+                                  color: AppColors.textSecondary,
                                 ),
                               ),
                             ],
@@ -384,103 +362,66 @@ class _ScanNailScreenState extends State<ScanNailScreen> with SingleTickerProvid
               const SizedBox(height: 24),
 
               // Capture Image Button
-              SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton.icon(
-                  onPressed: () {
-                    showModalBottomSheet(
-                      context: context,
-                      backgroundColor: Colors.white,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(24),
-                          topRight: Radius.circular(24),
-                        ),
+              AppButton(
+                text: 'Capture Image',
+                icon: Icons.camera_alt_outlined,
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    backgroundColor: Colors.white,
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(24),
+                        topRight: Radius.circular(24),
                       ),
-                      builder: (BuildContext context) {
-                        return SafeArea(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                const Text(
-                                  'Simulation Control',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w800,
-                                    color: Color(0xFF1F484C),
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                                const SizedBox(height: 8),
-                                const Text(
-                                  'Choose a quality check outcome to test the user flows:',
-                                  style: TextStyle(fontSize: 13, color: Color(0xFF718096)),
-                                  textAlign: TextAlign.center,
-                                ),
-                                const SizedBox(height: 20),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(builder: (_) => const AnalyzingNailScreen()),
-                                    );
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: const Color(0xFF1F484C),
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(vertical: 14),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                  ),
-                                  child: const Text('Simulate Success (Good Quality)'),
-                                ),
-                                const SizedBox(height: 12),
-                                OutlinedButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(builder: (_) => const ImageQualityAlertScreen()),
-                                    );
-                                  },
-                                  style: OutlinedButton.styleFrom(
-                                    foregroundColor: const Color(0xFF1F484C),
-                                    side: const BorderSide(color: Color(0xFF1F484C)),
-                                    padding: const EdgeInsets.symmetric(vertical: 14),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(16),
-                                    ),
-                                  ),
-                                  child: const Text('Simulate Alert (Poor Quality)'),
-                                ),
-                              ],
-                            ),
+                    ),
+                    builder: (BuildContext context) {
+                      return SafeArea(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              const Text(
+                                'Simulation Control',
+                                style: AppTypography.sectionHeading,
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 8),
+                              const Text(
+                                'Choose a quality check outcome to test the user flows:',
+                                style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 20),
+                              AppButton(
+                                text: 'Simulate Success (Good Quality)',
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(builder: (_) => const AnalyzingNailScreen()),
+                                  );
+                                },
+                              ),
+                              const SizedBox(height: 12),
+                              AppButton(
+                                text: 'Simulate Alert (Poor Quality)',
+                                isPrimary: false,
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(builder: (_) => const ImageQualityAlertScreen()),
+                                  );
+                                },
+                              ),
+                            ],
                           ),
-                        );
-                      },
-                    );
-                  },
-                  icon: const Icon(Icons.camera_alt_outlined, size: 20),
-                  label: const Text(
-                    'Capture Image',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF1F484C),
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(28),
-                    ),
-                  ),
-                ),
+                        ),
+                      );
+                    },
+                  );
+                },
               ),
               const SizedBox(height: 80), // spacer for bottom nav bar
             ],

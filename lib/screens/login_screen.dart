@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:maroapp/core/theme/colors.dart';
+import 'package:maroapp/core/theme/radius.dart';
+import 'package:maroapp/core/theme/shadows.dart';
+import 'package:maroapp/core/widgets/app_button.dart';
 import 'main_navigation_shell.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -23,14 +27,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const Color inputBg = Color(0xFFF2F4F5);
-    const Color darkText = Color(0xFF1E1E1E);
-    const Color mutedText = Color(0xFF718096);
-    const Color greenAccent = Color(0xFF29A887);
-    const Color forgotColor = Color(0xFFE53E3E);
-
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 28.0, vertical: 24.0),
@@ -44,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 style: TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.w800,
-                  color: darkText,
+                  color: AppColors.textPrimary,
                   letterSpacing: -0.5,
                 ),
               ),
@@ -56,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 15,
-                    color: mutedText,
+                    color: AppColors.textSecondary,
                     height: 1.4,
                   ),
                 ),
@@ -71,23 +69,25 @@ class _LoginScreenState extends State<LoginScreen> {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: darkText,
+                    color: AppColors.textPrimary,
                   ),
                 ),
               ),
               const SizedBox(height: 8),
               Container(
                 decoration: BoxDecoration(
-                  color: inputBg,
-                  borderRadius: BorderRadius.circular(20),
+                  color: Colors.white,
+                  borderRadius: AppRadius.inputBorderRadius,
+                  border: Border.all(color: const Color(0xFFE2E8F0)),
+                  boxShadow: [AppShadows.soft],
                 ),
                 child: TextField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
-                  style: const TextStyle(fontSize: 15, color: darkText),
+                  style: const TextStyle(fontSize: 15, color: AppColors.textPrimary),
                   decoration: const InputDecoration(
                     hintText: 'Enter your email',
-                    hintStyle: TextStyle(color: Color(0xFFA0AEC0), fontSize: 15),
+                    hintStyle: TextStyle(color: AppColors.placeholder, fontSize: 15),
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 18),
                   ),
@@ -103,29 +103,31 @@ class _LoginScreenState extends State<LoginScreen> {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: darkText,
+                    color: AppColors.textPrimary,
                   ),
                 ),
               ),
               const SizedBox(height: 8),
               Container(
                 decoration: BoxDecoration(
-                  color: inputBg,
-                  borderRadius: BorderRadius.circular(20),
+                  color: Colors.white,
+                  borderRadius: AppRadius.inputBorderRadius,
+                  border: Border.all(color: const Color(0xFFE2E8F0)),
+                  boxShadow: [AppShadows.soft],
                 ),
                 child: TextField(
                   controller: _passwordController,
                   obscureText: _obscurePassword,
-                  style: const TextStyle(fontSize: 15, color: darkText),
+                  style: const TextStyle(fontSize: 15, color: AppColors.textPrimary),
                   decoration: InputDecoration(
                     hintText: 'Enter your password',
-                    hintStyle: const TextStyle(color: Color(0xFFA0AEC0), fontSize: 15),
+                    hintStyle: const TextStyle(color: AppColors.placeholder, fontSize: 15),
                     border: InputBorder.none,
                     contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-                        color: mutedText,
+                        color: AppColors.textSecondary,
                       ),
                       onPressed: () {
                         setState(() {
@@ -155,10 +157,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           width: 22,
                           height: 22,
                           decoration: BoxDecoration(
-                            color: _rememberMe ? greenAccent : Colors.transparent,
+                            color: _rememberMe ? AppColors.primary : Colors.transparent,
                             borderRadius: BorderRadius.circular(6),
                             border: Border.all(
-                              color: _rememberMe ? greenAccent : const Color(0xFFCBD5E0),
+                              color: _rememberMe ? AppColors.primary : const Color(0xFFCBD5E0),
                               width: 2,
                             ),
                           ),
@@ -172,7 +174,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: darkText,
+                            color: AppColors.textPrimary,
                           ),
                         ),
                       ],
@@ -190,7 +192,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w600,
-                        color: forgotColor,
+                        color: AppColors.error,
                       ),
                     ),
                   ),
@@ -199,31 +201,13 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 28),
 
               // Sign In Button
-              SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (_) => const MainNavigationShell()),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF111111),
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(28),
-                    ),
-                  ),
-                  child: const Text(
-                    'Sign in',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
+              AppButton(
+                text: 'Sign in',
+                onPressed: () {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (_) => const MainNavigationShell()),
+                  );
+                },
               ),
               const SizedBox(height: 28),
 
@@ -238,7 +222,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFFA0AEC0),
+                        color: AppColors.placeholder,
                       ),
                     ),
                   ),
@@ -277,7 +261,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   const Text(
                     "Don't have an account? ",
-                    style: TextStyle(fontSize: 14, color: mutedText),
+                    style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
                   ),
                   GestureDetector(
                     onTap: () {},
@@ -286,7 +270,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w800,
-                        color: darkText,
+                        color: AppColors.textPrimary,
                       ),
                     ),
                   ),
@@ -307,13 +291,16 @@ class _LoginScreenState extends State<LoginScreen> {
   }) {
     return SizedBox(
       width: double.infinity,
-      height: 56,
+      height: 52,
       child: Material(
-        color: const Color(0xFFF2F4F5),
-        borderRadius: BorderRadius.circular(28),
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: AppRadius.buttonBorderRadius,
+          side: const BorderSide(color: Color(0xFFE2E8F0)),
+        ),
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: AppRadius.buttonBorderRadius,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -323,8 +310,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 label,
                 style: const TextStyle(
                   fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF1E1E1E),
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
                 ),
               ),
             ],

@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:maroapp/core/theme/colors.dart';
+import 'package:maroapp/core/theme/typography.dart';
+import 'package:maroapp/core/theme/radius.dart';
+import 'package:maroapp/core/widgets/app_bar.dart';
+import 'package:maroapp/core/widgets/app_button.dart';
+import 'package:maroapp/core/widgets/app_card.dart';
 import 'package:maroapp/screens/login_screen.dart';
 import 'package:maroapp/state/app_state.dart';
 
@@ -12,14 +18,14 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const Color slateText = Color(0xFF1E293B);
-    const Color mutedText = Color(0xFF64748B);
-    const Color actionRed = Color(0xFFEF4444);
-    const Color borderGrey = Color(0xFFF1F5F9);
     final AppState appState = AppState();
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: AppColors.background,
+      appBar: CustomAppBar(
+        title: 'Profile',
+        onBackPressed: onBackPressed,
+      ),
       body: SafeArea(
         child: ListenableBuilder(
           listenable: appState,
@@ -29,46 +35,7 @@ class ProfileScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // 1. Header Row (Back button & Title)
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: onBackPressed,
-                        child: Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            border: Border.all(color: const Color(0xFFE2E8F0)),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.02),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: const Icon(
-                            Icons.arrow_back_ios_new_rounded,
-                            color: slateText,
-                            size: 20,
-                          ),
-                        ),
-                      ),
-                      const Text(
-                        'Profile',
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w800,
-                          color: slateText,
-                          letterSpacing: -0.5,
-                        ),
-                      ),
-                      const SizedBox(width: 44),
-                    ],
-                  ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 16),
 
                   // 2. Double-ring Profile Avatar
                   GestureDetector(
@@ -83,7 +50,7 @@ class ProfileScreen extends StatelessWidget {
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          border: Border.all(color: const Color(0xFF49C3DF), width: 2),
+                          border: Border.all(color: AppColors.primary, width: 2),
                         ),
                         child: appState.buildAvatarWidget(50),
                       ),
@@ -94,63 +61,25 @@ class ProfileScreen extends StatelessWidget {
                   // 3. Name & Username
                   Text(
                     appState.name,
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w800,
-                      color: slateText,
-                    ),
+                    style: AppTypography.screenTitle.copyWith(fontSize: 22),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     '@${appState.username}',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: mutedText,
-                      fontWeight: FontWeight.w500,
-                    ),
+                    style: AppTypography.caption,
                   ),
                   const SizedBox(height: 24),
 
                   // 4. Edit Profile Button
-                  SizedBox(
-                    width: double.infinity,
-                    height: 52,
-                    child: ElevatedButton(
-                      onPressed: () => _showEditProfileSheet(context, appState),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF18181B),
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(26),
-                        ),
-                      ),
-                      child: const Text(
-                        'Edit Profile',
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
+                  AppButton(
+                    text: 'Edit Profile',
+                    onPressed: () => _showEditProfileSheet(context, appState),
                   ),
                   const SizedBox(height: 32),
 
                   // 5. Settings List Card Container
-                  Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(28),
-                      border: Border.all(color: borderGrey, width: 1.5),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.02),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
+                  AppCard(
+                    padding: EdgeInsets.zero,
                     child: Column(
                       children: [
                         _buildMenuItem(
@@ -175,7 +104,7 @@ class ProfileScreen extends StatelessWidget {
                           onTap: () => _showSyncSheet(context, appState),
                         ),
                         const Divider(
-                          color: borderGrey,
+                          color: Color(0xFFF1F5F9),
                           thickness: 1.5,
                           height: 1,
                           indent: 16,
@@ -191,8 +120,8 @@ class ProfileScreen extends StatelessWidget {
                           context,
                           icon: Icons.logout_rounded,
                           title: 'Log Out',
-                          textColor: actionRed,
-                          iconColor: actionRed,
+                          textColor: AppColors.error,
+                          iconColor: AppColors.error,
                           showChevron: false,
                           onTap: () {
                             Navigator.of(context).pushAndRemoveUntil(
@@ -220,8 +149,8 @@ class ProfileScreen extends StatelessWidget {
     required String title,
     required VoidCallback onTap,
     String? trailingText,
-    Color textColor = const Color(0xFF1E293B),
-    Color iconColor = const Color(0xFF1E293B),
+    Color textColor = AppColors.textPrimary,
+    Color iconColor = AppColors.textPrimary,
     bool showChevron = true,
   }) {
     return ListTile(
@@ -229,10 +158,10 @@ class ProfileScreen extends StatelessWidget {
       leading: Icon(icon, color: iconColor, size: 22),
       title: Text(
         title,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 15,
           fontWeight: FontWeight.w700,
-          color: textColor,
+          color: AppColors.textPrimary,
         ),
       ),
       trailing: Row(
@@ -241,17 +170,13 @@ class ProfileScreen extends StatelessWidget {
           if (trailingText != null)
             Text(
               trailingText,
-              style: const TextStyle(
-                fontSize: 13,
-                color: Color(0xFF94A3B8),
-                fontWeight: FontWeight.w500,
-              ),
+              style: AppTypography.caption,
             ),
           if (showChevron) ...[
             const SizedBox(width: 8),
             const Icon(
               Icons.chevron_right_rounded,
-              color: Color(0xFF94A3B8),
+              color: AppColors.placeholder,
               size: 20,
             ),
           ],
@@ -319,7 +244,7 @@ class ProfileScreen extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
-                          color: Color(0xFF64748B),
+                          color: AppColors.textSecondary,
                         ),
                       ),
                       const SizedBox(height: 12),
@@ -389,7 +314,7 @@ class ProfileScreen extends StatelessWidget {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: isSelected ? const Color(0xFF29A887) : Colors.transparent,
+                                  color: isSelected ? AppColors.primary : Colors.transparent,
                                   width: 2.5,
                                 ),
                               ),
@@ -406,7 +331,7 @@ class ProfileScreen extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
-                          color: Color(0xFF1E293B),
+                          color: AppColors.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -414,10 +339,10 @@ class ProfileScreen extends StatelessWidget {
                         controller: nameController,
                         decoration: InputDecoration(
                           hintText: 'Enter your name',
-                          fillColor: const Color(0xFFF8FAFC),
+                          fillColor: AppColors.background,
                           filled: true,
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: AppRadius.inputBorderRadius,
                             borderSide: BorderSide.none,
                           ),
                           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -437,7 +362,7 @@ class ProfileScreen extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
-                          color: Color(0xFF1E293B),
+                          color: AppColors.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -445,12 +370,12 @@ class ProfileScreen extends StatelessWidget {
                         controller: usernameController,
                         decoration: InputDecoration(
                           hintText: 'Enter username',
-                          fillColor: const Color(0xFFF8FAFC),
+                          fillColor: AppColors.background,
                           filled: true,
                           prefixText: '@',
-                          prefixStyle: const TextStyle(color: Color(0xFF94A3B8), fontWeight: FontWeight.bold),
+                          prefixStyle: const TextStyle(color: AppColors.placeholder, fontWeight: FontWeight.bold),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: AppRadius.inputBorderRadius,
                             borderSide: BorderSide.none,
                           ),
                           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -473,7 +398,7 @@ class ProfileScreen extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w700,
-                          color: Color(0xFF1E293B),
+                          color: AppColors.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -482,10 +407,10 @@ class ProfileScreen extends StatelessWidget {
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
                           hintText: 'Enter email address',
-                          fillColor: const Color(0xFFF8FAFC),
+                          fillColor: AppColors.background,
                           filled: true,
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: AppRadius.inputBorderRadius,
                             borderSide: BorderSide.none,
                           ),
                           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -503,43 +428,25 @@ class ProfileScreen extends StatelessWidget {
                       const SizedBox(height: 28),
 
                       // Save Button
-                      SizedBox(
-                        width: double.infinity,
-                        height: 52,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            if (formKey.currentState!.validate()) {
-                              appState.name = nameController.text.trim();
-                              appState.username = usernameController.text.trim();
-                              appState.email = emailController.text.trim();
-                              appState.avatarType = selectedAvatar;
+                      AppButton(
+                        text: 'Save Changes',
+                        onPressed: () {
+                          if (formKey.currentState!.validate()) {
+                            appState.name = nameController.text.trim();
+                            appState.username = usernameController.text.trim();
+                            appState.email = emailController.text.trim();
+                            appState.avatarType = selectedAvatar;
 
-                              Navigator.pop(context);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Profile updated successfully!'),
-                                  backgroundColor: Color(0xFF29A887),
-                                  duration: Duration(seconds: 2),
-                                ),
-                              );
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF29A887),
-                            foregroundColor: Colors.white,
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(26),
-                            ),
-                          ),
-                          child: const Text(
-                            'Save Changes',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
+                            Navigator.pop(context);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Profile updated successfully!'),
+                                backgroundColor: AppColors.success,
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                          }
+                        },
                       ),
                     ],
                   ),
@@ -560,9 +467,9 @@ class ProfileScreen extends StatelessWidget {
       backgroundColor: Colors.transparent,
       builder: (context) {
         return Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.card)),
           ),
           padding: const EdgeInsets.all(28),
           child: Column(
@@ -577,7 +484,7 @@ class ProfileScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w800,
-                      color: Color(0xFF1E293B),
+                      color: AppColors.textPrimary,
                     ),
                   ),
                   IconButton(
@@ -596,11 +503,11 @@ class ProfileScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: isSelected ? FontWeight.w800 : FontWeight.w500,
-                      color: isSelected ? const Color(0xFF29A887) : const Color(0xFF1E293B),
+                      color: isSelected ? AppColors.primary : AppColors.textPrimary,
                     ),
                   ),
                   trailing: isSelected
-                      ? const Icon(Icons.check_circle_rounded, color: Color(0xFF29A887), size: 22)
+                      ? const Icon(Icons.check_circle_rounded, color: AppColors.primary, size: 22)
                       : null,
                   onTap: () {
                     appState.language = lang;
@@ -608,7 +515,7 @@ class ProfileScreen extends StatelessWidget {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text('Language changed to $lang'),
-                        backgroundColor: const Color(0xFF29A887),
+                        backgroundColor: AppColors.success,
                         duration: const Duration(seconds: 1),
                       ),
                     );
@@ -631,9 +538,9 @@ class ProfileScreen extends StatelessWidget {
           listenable: appState,
           builder: (context, _) {
             return Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.card)),
               ),
               padding: const EdgeInsets.all(28),
               child: Column(
@@ -648,7 +555,7 @@ class ProfileScreen extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w800,
-                          color: Color(0xFF1E293B),
+                          color: AppColors.textPrimary,
                         ),
                       ),
                       IconButton(
@@ -659,33 +566,33 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   SwitchListTile(
-                    activeThumbColor: const Color(0xFF29A887),
+                    activeColor: AppColors.primary,
                     contentPadding: EdgeInsets.zero,
                     title: const Text(
                       'Push Notifications',
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Color(0xFF1E293B)),
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
                     ),
                     subtitle: const Text('Receive instant alerts about reports and sync status'),
                     value: appState.pushNotifications,
                     onChanged: (val) => appState.pushNotifications = val,
                   ),
                   SwitchListTile(
-                    activeThumbColor: const Color(0xFF29A887),
+                    activeColor: AppColors.primary,
                     contentPadding: EdgeInsets.zero,
                     title: const Text(
                       'Email Notifications',
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Color(0xFF1E293B)),
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
                     ),
                     subtitle: const Text('Receive report summaries in your inbox'),
                     value: appState.emailNotifications,
                     onChanged: (val) => appState.emailNotifications = val,
                   ),
                   SwitchListTile(
-                    activeThumbColor: const Color(0xFF29A887),
+                    activeColor: AppColors.primary,
                     contentPadding: EdgeInsets.zero,
                     title: const Text(
                       'Weekly Analysis Reports',
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Color(0xFF1E293B)),
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
                     ),
                     subtitle: const Text('Get weekly breakdowns of your nail scan metrics'),
                     value: appState.weeklyReports,
@@ -710,9 +617,9 @@ class ProfileScreen extends StatelessWidget {
           listenable: appState,
           builder: (context, _) {
             return Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.card)),
               ),
               padding: const EdgeInsets.all(28),
               child: Column(
@@ -727,7 +634,7 @@ class ProfileScreen extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w800,
-                          color: Color(0xFF1E293B),
+                          color: AppColors.textPrimary,
                         ),
                       ),
                       IconButton(
@@ -748,14 +655,14 @@ class ProfileScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  const Divider(color: Color(0xFFF1F5F9), thickness: 1.5),
+                  const Divider(color: AppColors.secondaryBg, thickness: 1.5),
 
                   SwitchListTile(
-                    activeThumbColor: const Color(0xFF29A887),
+                    activeColor: AppColors.primary,
                     contentPadding: EdgeInsets.zero,
                     title: const Text(
                       'Auto-Sync on Wi-Fi',
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: Color(0xFF1E293B)),
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
                     ),
                     subtitle: const Text('Keep local scans synchronized automatically'),
                     value: appState.autoSync,
@@ -776,20 +683,20 @@ class ProfileScreen extends StatelessWidget {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text('Database synchronized successfully!'),
-                                    backgroundColor: Color(0xFF29A887),
+                                    backgroundColor: AppColors.success,
                                     duration: Duration(seconds: 2),
                                   ),
                                 );
                               }
                             },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF29A887),
+                        backgroundColor: AppColors.primary,
                         foregroundColor: Colors.white,
                         elevation: 0,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(26),
+                          borderRadius: AppRadius.buttonBorderRadius,
                         ),
-                        disabledBackgroundColor: const Color(0xFF86EFAC),
+                        disabledBackgroundColor: AppColors.primary.withValues(alpha: 0.5),
                       ),
                       child: appState.isSyncing
                           ? const SizedBox(
@@ -828,7 +735,7 @@ class ProfileScreen extends StatelessWidget {
             style: const TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.w800,
-              color: Color(0xFF94A3B8),
+              color: AppColors.placeholder,
               letterSpacing: 0.5,
             ),
           ),
@@ -840,7 +747,7 @@ class ProfileScreen extends StatelessWidget {
             style: const TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w700,
-              color: Color(0xFF1E293B),
+              color: AppColors.textPrimary,
             ),
           ),
         ],
@@ -864,9 +771,9 @@ class ProfileScreen extends StatelessWidget {
                 bottom: MediaQuery.of(context).viewInsets.bottom,
               ),
               child: Container(
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.card)),
                 ),
                 padding: const EdgeInsets.all(28),
                 constraints: BoxConstraints(
@@ -884,7 +791,7 @@ class ProfileScreen extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w800,
-                            color: Color(0xFF1E293B),
+                            color: AppColors.textPrimary,
                           ),
                         ),
                         IconButton(
@@ -904,7 +811,7 @@ class ProfileScreen extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w800,
-                                color: Color(0xFF1E293B),
+                                color: AppColors.textPrimary,
                               ),
                             ),
                             const SizedBox(height: 12),
@@ -924,14 +831,14 @@ class ProfileScreen extends StatelessWidget {
                                   'No. The AI nail scanner provides clinical probability and educational guidance. It is designed to encourage early consultation, not replace a professional evaluation by a qualified dermatologist.',
                             ),
                             const SizedBox(height: 24),
-                            const Divider(color: Color(0xFFF1F5F9), thickness: 1.5),
+                            const Divider(color: AppColors.secondaryBg, thickness: 1.5),
                             const SizedBox(height: 16),
                             const Text(
                               'Need additional assistance?',
                               style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.w800,
-                                color: Color(0xFF1E293B),
+                                color: AppColors.textPrimary,
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -939,7 +846,7 @@ class ProfileScreen extends StatelessWidget {
                               'Send a query directly to our support crew, and we will get back to you within 24 hours.',
                               style: TextStyle(
                                 fontSize: 13,
-                                color: Color(0xFF64748B),
+                                color: AppColors.textSecondary,
                                 height: 1.3,
                               ),
                             ),
@@ -949,11 +856,11 @@ class ProfileScreen extends StatelessWidget {
                               maxLines: 4,
                               decoration: InputDecoration(
                                 hintText: 'Describe your issue or feedback...',
-                                hintStyle: const TextStyle(color: Color(0xFF94A3B8), fontSize: 14),
-                                fillColor: const Color(0xFFF8FAFC),
+                                hintStyle: const TextStyle(color: AppColors.placeholder, fontSize: 14),
+                                fillColor: AppColors.background,
                                 filled: true,
                                 border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(16),
+                                  borderRadius: AppRadius.inputBorderRadius,
                                   borderSide: BorderSide.none,
                                 ),
                                 contentPadding: const EdgeInsets.all(16),
@@ -971,7 +878,7 @@ class ProfileScreen extends StatelessWidget {
                                           ScaffoldMessenger.of(context).showSnackBar(
                                             const SnackBar(
                                               content: Text('Please write a message before sending.'),
-                                              backgroundColor: Colors.redAccent,
+                                              backgroundColor: AppColors.error,
                                             ),
                                           );
                                           return;
@@ -989,19 +896,20 @@ class ProfileScreen extends StatelessWidget {
                                           ScaffoldMessenger.of(context).showSnackBar(
                                             const SnackBar(
                                               content: Text('Support query sent! Check your inbox soon.'),
-                                              backgroundColor: Color(0xFF29A887),
+                                              backgroundColor: AppColors.success,
                                               duration: Duration(milliseconds: 2500),
                                             ),
                                           );
                                         }
                                       },
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF1E293B),
+                                  backgroundColor: AppColors.primary,
                                   foregroundColor: Colors.white,
                                   elevation: 0,
                                   shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(26),
+                                    borderRadius: AppRadius.buttonBorderRadius,
                                   ),
+                                  disabledBackgroundColor: AppColors.primary.withValues(alpha: 0.5),
                                 ),
                                 child: isSubmitting
                                     ? const SizedBox(
@@ -1060,7 +968,7 @@ class _FAQTileState extends State<FAQTile> {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 6.0),
       decoration: BoxDecoration(
-        color: const Color(0xFFF8FAFC),
+        color: AppColors.secondaryBg,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Column(
@@ -1071,12 +979,12 @@ class _FAQTileState extends State<FAQTile> {
               style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
-                color: Color(0xFF1E293B),
+                color: AppColors.textPrimary,
               ),
             ),
             trailing: Icon(
               _isExpanded ? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded,
-              color: const Color(0xFF64748B),
+              color: AppColors.textSecondary,
             ),
             onTap: () {
               setState(() {
@@ -1091,7 +999,7 @@ class _FAQTileState extends State<FAQTile> {
                 widget.answer,
                 style: const TextStyle(
                   fontSize: 13,
-                  color: Color(0xFF64748B),
+                  color: AppColors.textSecondary,
                   height: 1.4,
                 ),
               ),

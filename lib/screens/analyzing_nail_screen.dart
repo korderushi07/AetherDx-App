@@ -1,5 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:maroapp/core/theme/colors.dart';
+import 'package:maroapp/core/theme/typography.dart';
+import 'package:maroapp/core/theme/radius.dart';
+import 'package:maroapp/core/theme/shadows.dart';
+import 'package:maroapp/core/theme/spacing.dart';
+import 'package:maroapp/core/widgets/app_button.dart';
+import 'package:maroapp/core/widgets/app_card.dart';
+import 'package:maroapp/core/theme/motion.dart';
+import 'package:maroapp/core/widgets/animations.dart';
 import 'result_screen.dart';
+
+enum AnalysisStep {
+  imageConfirmed,
+  scanning,
+  progressing,
+  revealed,
+}
 
 class AnalyzingNailScreen extends StatefulWidget {
   const AnalyzingNailScreen({super.key});
@@ -8,53 +24,93 @@ class AnalyzingNailScreen extends StatefulWidget {
   State<AnalyzingNailScreen> createState() => _AnalyzingNailScreenState();
 }
 
-class _AnalyzingNailScreenState extends State<AnalyzingNailScreen> with SingleTickerProviderStateMixin {
-  late AnimationController _progressController;
-  late Animation<double> _progressAnimation;
+class _AnalyzingNailScreenState extends State<AnalyzingNailScreen> {
+  AnalysisStep _currentStep = AnalysisStep.imageConfirmed;
+  double _progressValue = 0.0;
   bool _isCompleted = false;
 
   @override
   void initState() {
     super.initState();
-    _progressController = AnimationController(
-      duration: const Duration(seconds: 6),
-      vsync: this,
-    );
-
-    _progressAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(_progressController)
-      ..addListener(() {
-        setState(() {});
-      })
-      ..addStatusListener((status) {
-        if (status == AnimationStatus.completed) {
-          setState(() {
-            _isCompleted = true;
-          });
-        }
-      });
-
-    _progressController.forward();
+    _startSequence();
   }
 
-  @override
-  void dispose() {
-    _progressController.dispose();
-    super.dispose();
+  void _startSequence() async {
+    // Step 1: Image confirmed (starts immediately, checkmark fades in over 250ms)
+    // Hold step 1 for 1.2s to show verified status
+    await Future.delayed(const Duration(milliseconds: 1200));
+    if (!mounted) return;
+    setState(() {
+      _currentStep = AnalysisStep.scanning;
+    });
+
+    // Step 2: AI Scanning (subtle animated scan line, non-looping after 2s)
+    await Future.delayed(const Duration(milliseconds: 2000));
+    if (!mounted) return;
+    setState(() {
+      _currentStep = AnalysisStep.progressing;
+      _progressValue = 1.0;
+    });
+
+    // Step 3: Progress bar (0% -> 100%, 800ms, easeOutCubic)
+    await Future.delayed(const Duration(milliseconds: 800));
+    if (!mounted) return;
+    setState(() {
+      _currentStep = AnalysisStep.revealed;
+      _isCompleted = true;
+    });
+  }
+
+  String _getStepTitle() {
+    switch (_currentStep) {
+      case AnalysisStep.imageConfirmed:
+        return 'Image Confirmed';
+      case AnalysisStep.scanning:
+        return 'AI Scanning...';
+      case AnalysisStep.progressing:
+        return 'Analyzing Patterns...';
+      case AnalysisStep.revealed:
+        return 'Analysis Complete!';
+    }
+  }
+
+  String _getStepDescription() {
+    switch (_currentStep) {
+      case AnalysisStep.imageConfirmed:
+        return 'Nail photo quality checked and validated.';
+      case AnalysisStep.scanning:
+        return 'Detecting patterns and comparing with medical database.';
+      case AnalysisStep.progressing:
+        return 'Processing structures against classification models.';
+      case AnalysisStep.revealed:
+        return 'Nail patterns successfully processed.';
+    }
+  }
+
+  IconData _getStepIcon() {
+    if (_currentStep == AnalysisStep.revealed) {
+      return Icons.check_circle_outline_rounded;
+    }
+    return Icons.auto_awesome_outlined;
+  }
+
+  Color _getStepIconColor() {
+    if (_currentStep == AnalysisStep.revealed) {
+      return AppColors.success;
+    }
+    return AppColors.primary;
   }
 
   @override
   Widget build(BuildContext context) {
-    const Color darkTeal = Color(0xFF1F484C);
-    const Color mutedText = Color(0xFF718096);
-
-    final double progressPercent = _progressAnimation.value;
-    final int displayPercent = (progressPercent * 100).toInt();
-
     return Scaffold(
-      backgroundColor: const Color(0xFFFCFDFF),
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.screenPadding,
+            vertical: AppSpacing.screenPadding,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -70,17 +126,11 @@ class _AnalyzingNailScreenState extends State<AnalyzingNailScreen> with SingleTi
                         color: Colors.white,
                         shape: BoxShape.circle,
                         border: Border.all(color: const Color(0xFFE2E8F0)),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.02),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
+                        boxShadow: [AppShadows.soft],
                       ),
                       child: const Icon(
                         Icons.arrow_back_ios_new_rounded,
-                        color: Color(0xFF1E293B),
+                        color: AppColors.textPrimary,
                         size: 20,
                       ),
                     ),
@@ -92,41 +142,32 @@ class _AnalyzingNailScreenState extends State<AnalyzingNailScreen> with SingleTi
               // Headers
               const Text(
                 'Analyzing Nail',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w800,
-                  color: Color(0xFF1E293B),
-                  letterSpacing: -0.5,
-                ),
+                style: AppTypography.screenTitle,
               ),
               const SizedBox(height: 8),
               const Text(
                 'Our AI is analyzing your nail image',
                 style: TextStyle(
                   fontSize: 14,
-                  color: mutedText,
+                  color: AppColors.textSecondary,
                 ),
               ),
               const SizedBox(height: 28),
 
               // Viewfinder Scanner Section Card
-              Container(
-                width: double.infinity,
+              AppCard(
+                backgroundColor: AppColors.secondaryBg,
                 padding: const EdgeInsets.all(24.0),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFE4F3F5),
-                  borderRadius: BorderRadius.circular(28),
-                ),
                 child: Center(
                   child: Container(
                     width: 230,
                     height: 230,
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(28),
+                      borderRadius: AppRadius.cardBorderRadius,
                     ),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(28),
+                      borderRadius: AppRadius.cardBorderRadius,
                       child: Stack(
                         children: [
                           // 1. Captured Nail Image (reusing result image)
@@ -134,7 +175,7 @@ class _AnalyzingNailScreenState extends State<AnalyzingNailScreen> with SingleTi
                             child: Padding(
                               padding: const EdgeInsets.all(12.0),
                               child: ClipRRect(
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: AppRadius.imageBorderRadius,
                                 child: Image.asset(
                                   'assets/images/nail_analysis_result.png',
                                   fit: BoxFit.cover,
@@ -142,94 +183,137 @@ class _AnalyzingNailScreenState extends State<AnalyzingNailScreen> with SingleTi
                               ),
                             ),
                           ),
-                          // 2. Corner Viewfinder Brackets
-                          Positioned.fill(
-                            child: LayoutBuilder(
-                              builder: (context, constraints) {
-                                final double bracketSize = 24.0;
-                                final double stroke = 4.0;
-                                const Color bracketColor = Color(0xFF3E9BB0);
 
-                                return Stack(
-                                  children: [
-                                    // Top Left
-                                    Positioned(
-                                      top: 16,
-                                      left: 16,
-                                      child: Container(
-                                        width: bracketSize,
-                                        height: bracketSize,
-                                        decoration: BoxDecoration(
-                                          border: Border(
-                                            top: BorderSide(color: bracketColor, width: stroke),
-                                            left: BorderSide(color: bracketColor, width: stroke),
+                          // Image Confirmed Checkmark Overlay (Step 1)
+                          if (_currentStep == AnalysisStep.imageConfirmed)
+                            Positioned.fill(
+                              child: Container(
+                                color: Colors.black.withValues(alpha: 0.15),
+                                child: Center(
+                                  child: TweenAnimationBuilder<double>(
+                                    tween: Tween<double>(begin: 0.0, end: 1.0),
+                                    duration: const Duration(milliseconds: 250),
+                                    builder: (context, value, child) {
+                                      return Opacity(
+                                        opacity: value,
+                                        child: Transform.scale(
+                                          scale: 0.95 + (0.05 * value),
+                                          child: Container(
+                                            padding: const EdgeInsets.all(16),
+                                            decoration: const BoxDecoration(
+                                              color: Colors.white,
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: const Icon(
+                                              Icons.check_circle_rounded,
+                                              color: AppColors.success,
+                                              size: 48,
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    ),
-                                    // Top Right
-                                    Positioned(
-                                      top: 16,
-                                      right: 16,
-                                      child: Container(
-                                        width: bracketSize,
-                                        height: bracketSize,
-                                        decoration: BoxDecoration(
-                                          border: Border(
-                                            top: BorderSide(color: bracketColor, width: stroke),
-                                            right: BorderSide(color: bracketColor, width: stroke),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    // Bottom Left
-                                    Positioned(
-                                      bottom: 16,
-                                      left: 16,
-                                      child: Container(
-                                        width: bracketSize,
-                                        height: bracketSize,
-                                        decoration: BoxDecoration(
-                                          border: Border(
-                                            bottom: BorderSide(color: bracketColor, width: stroke),
-                                            left: BorderSide(color: bracketColor, width: stroke),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    // Bottom Right
-                                    Positioned(
-                                      bottom: 16,
-                                      right: 16,
-                                      child: Container(
-                                        width: bracketSize,
-                                        height: bracketSize,
-                                        decoration: BoxDecoration(
-                                          border: Border(
-                                            bottom: BorderSide(color: bracketColor, width: stroke),
-                                            right: BorderSide(color: bracketColor, width: stroke),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              },
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
+
+                          // 2. Corner Viewfinder Brackets (Step 2)
+                          if (_currentStep == AnalysisStep.scanning)
+                            Positioned.fill(
+                              child: LayoutBuilder(
+                                builder: (context, constraints) {
+                                  final double bracketSize = 24.0;
+                                  final double stroke = 4.0;
+                                  const Color bracketColor = AppColors.primary;
+
+                                  return Stack(
+                                    children: [
+                                      // Top Left
+                                      Positioned(
+                                        top: 16,
+                                        left: 16,
+                                        child: Container(
+                                          width: bracketSize,
+                                          height: bracketSize,
+                                          decoration: BoxDecoration(
+                                            border: Border(
+                                              top: BorderSide(color: bracketColor, width: stroke),
+                                              left: BorderSide(color: bracketColor, width: stroke),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      // Top Right
+                                      Positioned(
+                                        top: 16,
+                                        right: 16,
+                                        child: Container(
+                                          width: bracketSize,
+                                          height: bracketSize,
+                                          decoration: BoxDecoration(
+                                            border: Border(
+                                              top: BorderSide(color: bracketColor, width: stroke),
+                                              right: BorderSide(color: bracketColor, width: stroke),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      // Bottom Left
+                                      Positioned(
+                                        bottom: 16,
+                                        left: 16,
+                                        child: Container(
+                                          width: bracketSize,
+                                          height: bracketSize,
+                                          decoration: BoxDecoration(
+                                            border: Border(
+                                              bottom: BorderSide(color: bracketColor, width: stroke),
+                                              left: BorderSide(color: bracketColor, width: stroke),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      // Bottom Right
+                                      Positioned(
+                                        bottom: 16,
+                                        right: 16,
+                                        child: Container(
+                                          width: bracketSize,
+                                          height: bracketSize,
+                                          decoration: BoxDecoration(
+                                            border: Border(
+                                              bottom: BorderSide(color: bracketColor, width: stroke),
+                                              right: BorderSide(color: bracketColor, width: stroke),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ),
+                            ),
                           // 3. Triple Horizontal Cyan Laser Lines
-                          Positioned.fill(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                _buildLaserLine(),
-                                const SizedBox(height: 24),
-                                _buildLaserLine(),
-                                const SizedBox(height: 24),
-                                _buildLaserLine(),
-                              ],
+                          if (_currentStep == AnalysisStep.scanning)
+                            Positioned.fill(
+                              child: TweenAnimationBuilder<double>(
+                                tween: Tween<double>(begin: 0.05, end: 0.95),
+                                duration: const Duration(seconds: 2),
+                                builder: (context, value, child) {
+                                  return Stack(
+                                    children: [
+                                      Positioned(
+                                        top: value * 230.0,
+                                        left: 12,
+                                        right: 12,
+                                        child: _buildLaserLine(),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ),
                             ),
-                          ),
                         ],
                       ),
                     ),
@@ -239,26 +323,20 @@ class _AnalyzingNailScreenState extends State<AnalyzingNailScreen> with SingleTi
               const SizedBox(height: 32),
 
               // Status Block (Analyzing details)
-              Container(
-                width: double.infinity,
+              AppCard(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: const Color(0xFFF1F5F9)),
-                ),
                 child: Row(
                   children: [
                     // Circular indicator badge
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: _isCompleted ? const Color(0xFFDCFCE7) : const Color(0xFFE6F4F8),
+                        color: _isCompleted ? const Color(0xFFDCFCE7) : AppColors.secondaryBg,
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
-                        _isCompleted ? Icons.check_circle_outline_rounded : Icons.auto_awesome_outlined,
-                        color: _isCompleted ? const Color(0xFF15803D) : const Color(0xFF33A8C7),
+                        _getStepIcon(),
+                        color: _getStepIconColor(),
                         size: 22,
                       ),
                     ),
@@ -268,21 +346,19 @@ class _AnalyzingNailScreenState extends State<AnalyzingNailScreen> with SingleTi
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            _isCompleted ? 'Analysis Complete!' : 'Analyzing...',
+                            _getStepTitle(),
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w800,
-                              color: darkTeal,
+                              color: AppColors.primary,
                             ),
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            _isCompleted
-                                ? 'Nail patterns successfully processed.'
-                                : 'Detecting patterns and comparing with medical database',
+                            _getStepDescription(),
                             style: const TextStyle(
                               fontSize: 13,
-                              color: mutedText,
+                              color: AppColors.textSecondary,
                               height: 1.3,
                             ),
                           ),
@@ -300,24 +376,31 @@ class _AnalyzingNailScreenState extends State<AnalyzingNailScreen> with SingleTi
                   Expanded(
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: LinearProgressIndicator(
-                        value: progressPercent,
+                      child: AnimatedProgressBar(
+                        value: _progressValue,
                         minHeight: 12,
                         backgroundColor: const Color(0xFFE2E8F0),
-                        valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF3B82F6)),
+                        valueColor: AppColors.primary,
                       ),
                     ),
                   ),
                   const SizedBox(width: 16),
                   SizedBox(
                     width: 45,
-                    child: Text(
-                      '$displayPercent%',
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0xFF3B82F6),
-                      ),
+                    child: TweenAnimationBuilder<double>(
+                      tween: Tween<double>(begin: 0.0, end: _progressValue),
+                      duration: const Duration(milliseconds: 800),
+                      curve: AetherMotion.enter,
+                      builder: (context, value, child) {
+                        return Text(
+                          '${(value * 100).toInt()}%',
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.primary,
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ],
@@ -326,27 +409,16 @@ class _AnalyzingNailScreenState extends State<AnalyzingNailScreen> with SingleTi
 
               // View Results Action Button when completed
               if (_isCompleted)
-                SizedBox(
-                  width: double.infinity,
-                  height: 54,
-                  child: ElevatedButton(
+                FadeSlideWidget(
+                  delay: const Duration(milliseconds: 100),
+                  slideDistance: AetherMotion.slideDistanceSmall,
+                  child: AppButton(
+                    text: 'View Results',
                     onPressed: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(builder: (_) => const ResultScreen()),
                       );
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: darkTeal,
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(27),
-                      ),
-                    ),
-                    child: const Text(
-                      'View Results',
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
-                    ),
                   ),
                 ),
 
@@ -355,23 +427,21 @@ class _AnalyzingNailScreenState extends State<AnalyzingNailScreen> with SingleTi
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF1F5F9),
+                  color: AppColors.secondaryBg,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
-                  children: const [
-                    Icon(
+                  children: [
+                    const Icon(
                       Icons.access_time_rounded,
-                      color: mutedText,
+                      color: AppColors.textSecondary,
                       size: 16,
                     ),
-                    SizedBox(width: 8),
+                    const SizedBox(width: 8),
                     Text(
                       'This usually takes 10–15 seconds',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: mutedText,
+                      style: AppTypography.caption.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
                     ),

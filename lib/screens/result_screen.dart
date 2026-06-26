@@ -1,4 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:maroapp/core/theme/colors.dart';
+import 'package:maroapp/core/theme/typography.dart';
+import 'package:maroapp/core/theme/radius.dart';
+import 'package:maroapp/core/theme/shadows.dart';
+import 'package:maroapp/core/widgets/app_button.dart';
+import 'package:maroapp/core/widgets/app_card.dart';
 import 'specialists_screen.dart';
 import 'educational_screen.dart';
 import 'nutrition_lifestyle_screen.dart';
@@ -25,13 +31,8 @@ class ResultScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const Color darkTeal = Color(0xFF1E293B);
-    const Color mutedText = Color(0xFF64748B);
-    const Color purpleAccent = Color(0xFF7C3AED);
-    const Color lightPurpleBg = Color(0xFFEEF2FF);
-
     return Scaffold(
-      backgroundColor: const Color(0xFFE2E2FC),
+      backgroundColor: AppColors.background,
       body: Stack(
         children: [
           // 1. Top Right Abstract Pattern Image Overlay
@@ -68,6 +69,7 @@ class ResultScreen extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: Colors.white,
                             shape: BoxShape.circle,
+                            border: Border.all(color: const Color(0xFFE2E8F0)),
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withValues(alpha: 0.04),
@@ -77,8 +79,8 @@ class ResultScreen extends StatelessWidget {
                             ],
                           ),
                           child: const Icon(
-                            Icons.arrow_back_ios_new_rounded,
-                            color: Color(0xFF1E293B),
+                            Icons.arrow_back_rounded,
+                            color: AppColors.textPrimary,
                             size: 20,
                           ),
                         ),
@@ -90,7 +92,7 @@ class ResultScreen extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w800,
-                          color: purpleAccent,
+                          color: AppColors.primary,
                           letterSpacing: 1.0,
                         ),
                       ),
@@ -98,12 +100,7 @@ class ResultScreen extends StatelessWidget {
                       // Your Results header
                       const Text(
                         'Your Results',
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.w800,
-                          color: darkTeal,
-                          letterSpacing: -0.5,
-                        ),
+                        style: AppTypography.screenTitle,
                       ),
                       const SizedBox(height: 4),
                       // Analysis complete subtitle
@@ -111,7 +108,7 @@ class ResultScreen extends StatelessWidget {
                         'AI analysis complete',
                         style: TextStyle(
                           fontSize: 14,
-                          color: mutedText,
+                          color: AppColors.textSecondary,
                         ),
                       ),
                     ],
@@ -126,14 +123,9 @@ class ResultScreen extends StatelessWidget {
                     margin: const EdgeInsets.fromLTRB(24.0, 0.0, 24.0, 24.0),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(36),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.04),
-                          blurRadius: 16,
-                          offset: const Offset(0, 8),
-                        ),
-                      ],
+                      borderRadius: AppRadius.cardBorderRadius,
+                      border: Border.all(color: const Color(0xFFE2E8F0)),
+                      boxShadow: [AppShadows.soft],
                     ),
                     clipBehavior: Clip.antiAlias,
                     child: Column(
@@ -145,12 +137,9 @@ class ResultScreen extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 // 78% Match Card Banner
-                                Container(
+                                AppCard(
+                                  backgroundColor: AppColors.secondaryBg,
                                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                                  decoration: BoxDecoration(
-                                    color: lightPurpleBg,
-                                    borderRadius: BorderRadius.circular(24),
-                                  ),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
@@ -162,7 +151,7 @@ class ResultScreen extends StatelessWidget {
                                             style: const TextStyle(
                                               fontSize: 20,
                                               fontWeight: FontWeight.w800,
-                                              color: purpleAccent,
+                                              color: AppColors.primary,
                                             ),
                                           ),
                                           const SizedBox(height: 4),
@@ -170,7 +159,7 @@ class ResultScreen extends StatelessWidget {
                                             confidenceLabel,
                                             style: const TextStyle(
                                               fontSize: 13,
-                                              color: mutedText,
+                                              color: AppColors.textSecondary,
                                               fontWeight: FontWeight.w600,
                                             ),
                                           ),
@@ -180,7 +169,7 @@ class ResultScreen extends StatelessWidget {
                                       Container(
                                         padding: const EdgeInsets.all(12),
                                         decoration: const BoxDecoration(
-                                          color: purpleAccent,
+                                          color: AppColors.primary,
                                           shape: BoxShape.circle,
                                         ),
                                         child: const Icon(
@@ -197,25 +186,21 @@ class ResultScreen extends StatelessWidget {
                                 // Diagnosis title & description
                                 Text(
                                   conditionName,
-                                  style: const TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.w800,
-                                    color: darkTeal,
-                                  ),
+                                  style: AppTypography.sectionHeading,
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
                                   description,
                                   style: const TextStyle(
                                     fontSize: 14,
-                                    color: mutedText,
+                                    color: AppColors.textSecondary,
                                     height: 1.4,
                                   ),
                                 ),
                                 const SizedBox(height: 12),
                                 Row(
                                   children: [
-                                    const Icon(Icons.menu_book_rounded, color: purpleAccent, size: 16),
+                                    const Icon(Icons.menu_book_rounded, color: AppColors.primary, size: 16),
                                     const SizedBox(width: 6),
                                     TextButton(
                                       onPressed: () {
@@ -231,7 +216,7 @@ class ResultScreen extends StatelessWidget {
                                       child: const Text(
                                         'Read full health guide',
                                         style: TextStyle(
-                                          color: purpleAccent,
+                                          color: AppColors.primary,
                                           fontWeight: FontWeight.w800,
                                           fontSize: 14,
                                         ),
@@ -266,7 +251,7 @@ class ResultScreen extends StatelessWidget {
                                 Row(
                                   children: [
                                     const SizedBox(width: 44),
-                                    const Icon(Icons.spa_outlined, color: purpleAccent, size: 16),
+                                    const Icon(Icons.spa_outlined, color: AppColors.primary, size: 16),
                                     const SizedBox(width: 6),
                                     TextButton(
                                       onPressed: () {
@@ -282,7 +267,7 @@ class ResultScreen extends StatelessWidget {
                                       child: const Text(
                                         'View Nutrition & Lifestyle Suggestions',
                                         style: TextStyle(
-                                          color: purpleAccent,
+                                          color: AppColors.primary,
                                           fontWeight: FontWeight.w800,
                                           fontSize: 14,
                                         ),
@@ -297,32 +282,14 @@ class ResultScreen extends StatelessWidget {
                         // Fixed Bottom Button Area
                         Padding(
                           padding: const EdgeInsets.fromLTRB(24.0, 8.0, 24.0, 24.0),
-                          child: SizedBox(
-                            width: double.infinity,
-                            height: 56,
-                            child: ElevatedButton.icon(
-                              onPressed: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(builder: (_) => const SpecialistsScreen()),
-                                );
-                              },
-                              icon: const Icon(Icons.calendar_today_outlined, size: 18),
-                              label: const Text(
-                                'Book a doctor',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: purpleAccent,
-                                foregroundColor: Colors.white,
-                                elevation: 0,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(28),
-                                ),
-                              ),
-                            ),
+                          child: AppButton(
+                            text: 'Book a doctor',
+                            icon: Icons.calendar_today_outlined,
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(builder: (_) => const SpecialistsScreen()),
+                              );
+                            },
                           ),
                         ),
                       ],
@@ -348,12 +315,12 @@ class ResultScreen extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(10),
           decoration: const BoxDecoration(
-            color: Color(0xFFEEF2FF),
+            color: AppColors.secondaryBg,
             shape: BoxShape.circle,
           ),
           child: Icon(
             icon,
-            color: const Color(0xFF7C3AED),
+            color: AppColors.primary,
             size: 20,
           ),
         ),
@@ -364,18 +331,14 @@ class ResultScreen extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w800,
-                  color: Color(0xFF1E293B),
-                ),
+                style: AppTypography.cardTitle,
               ),
               const SizedBox(height: 4),
               Text(
                 description,
                 style: const TextStyle(
                   fontSize: 13,
-                  color: Color(0xFF64748B),
+                  color: AppColors.textSecondary,
                   height: 1.3,
                 ),
               ),
