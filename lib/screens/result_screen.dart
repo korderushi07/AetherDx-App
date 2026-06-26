@@ -1,7 +1,26 @@
 import 'package:flutter/material.dart';
+import 'specialists_screen.dart';
+import 'educational_screen.dart';
 
 class ResultScreen extends StatelessWidget {
-  const ResultScreen({super.key});
+  final String conditionName;
+  final int matchPercentage;
+  final String confidenceLabel;
+  final String description;
+  final String keySigns;
+  final String nextSteps;
+  final String careTips;
+
+  const ResultScreen({
+    super.key,
+    this.conditionName = 'Nail Psoriasis',
+    this.matchPercentage = 78,
+    this.confidenceLabel = 'High confidence',
+    this.description = 'A chronic autoimmune condition that affects nail cells, causing changes in appearance.',
+    this.keySigns = 'Pitting, discoloration, rough texture, and nail thickening',
+    this.nextSteps = 'Consult a dermatologist for proper diagnosis and treatment',
+    this.careTips = 'Keep nails moisturized, avoid trauma, and manage stress',
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -136,19 +155,19 @@ class ResultScreen extends StatelessWidget {
                                     children: [
                                       Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: const [
+                                        children: [
                                           Text(
-                                            '78% match',
-                                            style: TextStyle(
+                                            '$matchPercentage% match',
+                                            style: const TextStyle(
                                               fontSize: 20,
                                               fontWeight: FontWeight.w800,
                                               color: purpleAccent,
                                             ),
                                           ),
-                                          SizedBox(height: 4),
+                                          const SizedBox(height: 4),
                                           Text(
-                                            'High confidence',
-                                            style: TextStyle(
+                                            confidenceLabel,
+                                            style: const TextStyle(
                                               fontSize: 13,
                                               color: mutedText,
                                               fontWeight: FontWeight.w600,
@@ -175,25 +194,52 @@ class ResultScreen extends StatelessWidget {
                                 const SizedBox(height: 24),
 
                                 // Diagnosis title & description
-                                const Text(
-                                  'Nail Psoriasis',
-                                  style: TextStyle(
+                                Text(
+                                  conditionName,
+                                  style: const TextStyle(
                                     fontSize: 22,
                                     fontWeight: FontWeight.w800,
                                     color: darkTeal,
                                   ),
                                 ),
                                 const SizedBox(height: 8),
-                                const Text(
-                                  'A chronic autoimmune condition that affects nail cells, causing changes in appearance.',
-                                  style: TextStyle(
+                                Text(
+                                  description,
+                                  style: const TextStyle(
                                     fontSize: 14,
                                     color: mutedText,
                                     height: 1.4,
                                   ),
                                 ),
+                                const SizedBox(height: 12),
+                                Row(
+                                  children: [
+                                    const Icon(Icons.menu_book_rounded, color: purpleAccent, size: 16),
+                                    const SizedBox(width: 6),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(builder: (_) => const EducationalScreen()),
+                                        );
+                                      },
+                                      style: TextButton.styleFrom(
+                                        padding: EdgeInsets.zero,
+                                        minimumSize: Size.zero,
+                                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                      ),
+                                      child: const Text(
+                                        'Read full health guide',
+                                        style: TextStyle(
+                                          color: purpleAccent,
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                                 const Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 20.0),
+                                  padding: EdgeInsets.symmetric(vertical: 16.0),
                                   child: Divider(color: Color(0xFFF1F5F9), thickness: 1.5),
                                 ),
 
@@ -201,19 +247,19 @@ class ResultScreen extends StatelessWidget {
                                 _buildDetailsRow(
                                   icon: Icons.gps_fixed_rounded,
                                   title: 'Key Signs Detected',
-                                  description: 'Pitting, discoloration, rough texture, and nail thickening',
+                                  description: keySigns,
                                 ),
                                 const SizedBox(height: 20),
                                 _buildDetailsRow(
                                   icon: Icons.gpp_maybe_outlined,
                                   title: 'Recommended Next Steps',
-                                  description: 'Consult a dermatologist for proper diagnosis and treatment',
+                                  description: nextSteps,
                                 ),
                                 const SizedBox(height: 20),
                                 _buildDetailsRow(
                                   icon: Icons.description_outlined,
                                   title: 'General Care Tips',
-                                  description: 'Keep nails moisturized, avoid trauma, and manage stress',
+                                  description: careTips,
                                 ),
                               ],
                             ),
@@ -226,7 +272,11 @@ class ResultScreen extends StatelessWidget {
                             width: double.infinity,
                             height: 56,
                             child: ElevatedButton.icon(
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(builder: (_) => const SpecialistsScreen()),
+                                );
+                              },
                               icon: const Icon(Icons.calendar_today_outlined, size: 18),
                               label: const Text(
                                 'Book a doctor',
