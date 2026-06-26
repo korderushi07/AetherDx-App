@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:maroapp/core/theme/colors.dart';
 import 'package:maroapp/core/theme/typography.dart';
+import 'package:maroapp/core/theme/radius.dart';
+import 'package:maroapp/core/theme/shadows.dart';
 import 'package:maroapp/core/widgets/app_button.dart';
 import 'package:maroapp/core/widgets/app_card.dart';
 import 'specialists_screen.dart';
+import 'educational_screen.dart';
 import 'nutrition_lifestyle_screen.dart';
-import '../core/widgets/animations.dart';
 
 class ResultScreen extends StatelessWidget {
   final String conditionName;
@@ -18,239 +20,332 @@ class ResultScreen extends StatelessWidget {
 
   const ResultScreen({
     super.key,
-    this.conditionName = 'Mild Onychomycosis',
-    this.matchPercentage = 92,
-    this.confidenceLabel = 'Mild',
-    this.description = 'A common fungal infection of the nail, causing discoloration, scaling, and thickening. It is often caused by dermatophytes.',
-    this.keySigns = 'Discoloration, scaling under the nail, thickening, and crumbly edges',
-    this.nextSteps = 'Consult a dermatologist to confirm diagnosis and obtain prescription antifungal medication',
-    this.careTips = 'Keep nails dry and clean, wear breathable socks, apply antifungal as directed',
+    this.conditionName = 'Nail Psoriasis',
+    this.matchPercentage = 78,
+    this.confidenceLabel = 'High confidence',
+    this.description = 'A chronic autoimmune condition that affects nail cells, causing changes in appearance.',
+    this.keySigns = 'Pitting, discoloration, rough texture, and nail thickening',
+    this.nextSteps = 'Consult a dermatologist for proper diagnosis and treatment',
+    this.careTips = 'Keep nails moisturized, avoid trauma, and manage stress',
   });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Top Header navigation
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.of(context).pop(),
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: AppColors.border, width: 1.0),
-                      ),
-                      child: const Icon(
-                        Icons.arrow_back_rounded,
-                        color: AppColors.textPrimary,
-                        size: 20,
-                      ),
-                    ),
-                  ),
-                  const Text(
-                    '11:42 AM',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                ],
+      body: Stack(
+        children: [
+          // 1. Top Right Abstract Pattern Image Overlay
+          Positioned(
+            top: -20,
+            right: -20,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(40),
+              child: Image.asset(
+                'assets/images/result_header_pattern.png',
+                width: 190,
+                height: 190,
+                fit: BoxFit.cover,
               ),
             ),
+          ),
 
-            // Diagnostic Report Header Label
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.0),
-              child: Text(
-                'Diagnostic Report',
-                style: AppTypography.heading1,
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Scrollable Content
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Main Diagnosis Card
-                    AppCard(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            conditionName,
-                            style: AppTypography.heading1,
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '$matchPercentage% Match Probability',
-                            style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.textSecondary,
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(2),
-                            child: AnimatedProgressBar(
-                              value: matchPercentage / 100.0,
-                              minHeight: 4,
-                              backgroundColor: AppColors.secondaryBg,
-                              valueColor: AppColors.ai,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text('MILD', style: AppTypography.overline.copyWith(fontSize: 8)),
-                              Text('MODERATE', style: AppTypography.overline.copyWith(fontSize: 8)),
-                              Text('SEVERE', style: AppTypography.overline.copyWith(fontSize: 8)),
+          // 2. Main Content Stack
+          SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Top Header actions & titles
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Back Button
+                      GestureDetector(
+                        onTap: () => Navigator.of(context).pop(),
+                        child: Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: const Color(0xFFE2E8F0)),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.04),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
                             ],
                           ),
-                        ],
+                          child: const Icon(
+                            Icons.arrow_back_rounded,
+                            color: AppColors.textPrimary,
+                            size: 20,
+                          ),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 16),
+                      const SizedBox(height: 28),
+                      // Results upper text
+                      const Text(
+                        'RESULTS',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.primary,
+                          letterSpacing: 1.0,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      // Your Results header
+                      const Text(
+                        'Your Results',
+                        style: AppTypography.screenTitle,
+                      ),
+                      const SizedBox(height: 4),
+                      // Analysis complete subtitle
+                      const Text(
+                        'AI analysis complete',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
 
-                    // Two-Column Section: Key Signs & Next Steps
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                // White Sheet Container
+                Expanded(
+                  child: Container(
+                    width: double.infinity,
+                    margin: const EdgeInsets.fromLTRB(24.0, 0.0, 24.0, 24.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: AppRadius.cardBorderRadius,
+                      border: Border.all(color: const Color(0xFFE2E8F0)),
+                      boxShadow: [AppShadows.soft],
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: Column(
                       children: [
-                        // Key Signs Column
                         Expanded(
-                          child: AppCard(
+                          child: SingleChildScrollView(
+                            padding: const EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 8.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
-                                  'KEY SIGNS',
-                                  style: AppTypography.overline,
+                                // 78% Match Card Banner
+                                AppCard(
+                                  backgroundColor: AppColors.secondaryBg,
+                                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            '$matchPercentage% match',
+                                            style: const TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w800,
+                                              color: AppColors.primary,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            confidenceLabel,
+                                            style: const TextStyle(
+                                              fontSize: 13,
+                                              color: AppColors.textSecondary,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      // Security shield icon circular badge
+                                      Container(
+                                        padding: const EdgeInsets.all(12),
+                                        decoration: const BoxDecoration(
+                                          color: AppColors.primary,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: const Icon(
+                                          Icons.verified_user_rounded,
+                                          color: Colors.white,
+                                          size: 20,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 24),
+
+                                // Diagnosis title & description
+                                Text(
+                                  conditionName,
+                                  style: AppTypography.sectionHeading,
                                 ),
                                 const SizedBox(height: 8),
-                                ...keySigns.split(',').map((item) => Padding(
-                                  padding: const EdgeInsets.only(top: 4.0),
-                                  child: Text(
-                                    '· ${item.trim()}',
-                                    style: AppTypography.body,
+                                Text(
+                                  description,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    color: AppColors.textSecondary,
+                                    height: 1.4,
                                   ),
-                                )),
+                                ),
+                                const SizedBox(height: 12),
+                                Row(
+                                  children: [
+                                    const Icon(Icons.menu_book_rounded, color: AppColors.primary, size: 16),
+                                    const SizedBox(width: 6),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(builder: (_) => const EducationalScreen()),
+                                        );
+                                      },
+                                      style: TextButton.styleFrom(
+                                        padding: EdgeInsets.zero,
+                                        minimumSize: Size.zero,
+                                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                      ),
+                                      child: const Text(
+                                        'Read full health guide',
+                                        style: TextStyle(
+                                          color: AppColors.primary,
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 16.0),
+                                  child: Divider(color: Color(0xFFF1F5F9), thickness: 1.5),
+                                ),
+
+                                // Detailed list of symptoms and guides
+                                _buildDetailsRow(
+                                  icon: Icons.gps_fixed_rounded,
+                                  title: 'Key Signs Detected',
+                                  description: keySigns,
+                                ),
+                                const SizedBox(height: 20),
+                                _buildDetailsRow(
+                                  icon: Icons.gpp_maybe_outlined,
+                                  title: 'Recommended Next Steps',
+                                  description: nextSteps,
+                                ),
+                                const SizedBox(height: 20),
+                                _buildDetailsRow(
+                                  icon: Icons.description_outlined,
+                                  title: 'General Care Tips',
+                                  description: careTips,
+                                ),
+                                const SizedBox(height: 12),
+                                Row(
+                                  children: [
+                                    const SizedBox(width: 44),
+                                    const Icon(Icons.spa_outlined, color: AppColors.primary, size: 16),
+                                    const SizedBox(width: 6),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(builder: (_) => const NutritionLifestyleScreen()),
+                                        );
+                                      },
+                                      style: TextButton.styleFrom(
+                                        padding: EdgeInsets.zero,
+                                        minimumSize: Size.zero,
+                                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                      ),
+                                      child: const Text(
+                                        'View Nutrition & Lifestyle Suggestions',
+                                        style: TextStyle(
+                                          color: AppColors.primary,
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ],
                             ),
                           ),
                         ),
-                        const SizedBox(width: 12),
-                        // Next Steps Column
-                        Expanded(
-                          child: AppCard(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'NEXT STEPS',
-                                  style: AppTypography.overline,
-                                ),
-                                const SizedBox(height: 8),
-                                ...nextSteps.split(',').map((item) => Padding(
-                                  padding: const EdgeInsets.only(top: 4.0),
-                                  child: Text(
-                                    '· ${item.trim()}',
-                                    style: AppTypography.body,
-                                  ),
-                                )),
-                              ],
-                            ),
+                        // Fixed Bottom Button Area
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(24.0, 8.0, 24.0, 24.0),
+                          child: AppButton(
+                            text: 'Book a doctor',
+                            icon: Icons.calendar_today_outlined,
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(builder: (_) => const SpecialistsScreen()),
+                              );
+                            },
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-                    // Care Guidelines checklist card
-                    const Text(
-                      'CARE GUIDELINES',
-                      style: AppTypography.overline,
-                    ),
-                    const SizedBox(height: 8),
-                    AppCard(
-                      child: Column(
-                        children: careTips.split(',').map((item) => Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 6.0),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Padding(
-                                padding: EdgeInsets.only(top: 2.0),
-                                child: Icon(
-                                  Icons.check_circle_rounded,
-                                  color: AppColors.success,
-                                  size: 16,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  item.trim(),
-                                  style: AppTypography.body,
-                                ),
-                              ),
-                            ],
-                          ),
-                        )).toList(),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // Action Buttons
-                    AppButton(
-                      text: 'Find Nearest Specialist',
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const SpecialistsScreen()),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 12),
-                    Center(
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(builder: (_) => const NutritionLifestyleScreen()),
-                          );
-                        },
-                        child: const Text(
-                          'View Diet & Lifestyle Plan',
-                          style: TextStyle(
-                            color: AppColors.ai,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 32),
-                  ],
+  Widget _buildDetailsRow({
+    required IconData icon,
+    required String title,
+    required String description,
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: const BoxDecoration(
+            color: AppColors.secondaryBg,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            icon,
+            color: AppColors.primary,
+            size: 20,
+          ),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: AppTypography.cardTitle,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                description,
+                style: const TextStyle(
+                  fontSize: 13,
+                  color: AppColors.textSecondary,
+                  height: 1.3,
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
+      ],
     );
   }
 }

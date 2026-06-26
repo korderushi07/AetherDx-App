@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:maroapp/core/theme/colors.dart';
 import 'package:maroapp/core/theme/typography.dart';
-import 'package:maroapp/core/theme/spacing.dart';
 import 'package:maroapp/core/widgets/app_bar.dart';
 import 'package:maroapp/core/widgets/app_card.dart';
-import 'package:maroapp/core/widgets/animations.dart';
 import 'result_screen.dart';
 
 class HistoryScreen extends StatelessWidget {
@@ -22,9 +20,11 @@ class HistoryScreen extends StatelessWidget {
         'date': 'Nov 1, 2025',
         'condition': 'Fungal Infection',
         'confidence': '92%',
-        'statusText': 'High Risk',
-        'badgeBg': const Color(0xFFFEE2E2),
-        'badgeText': AppColors.error,
+        'region': 'Left Index Finger',
+        'action': 'Topical Antifungal',
+        'titleColor': AppColors.primary,
+        'badgeBg': AppColors.primary,
+        'badgeText': Colors.white,
         'reportParams': {
           'conditionName': 'Fungal Infection',
           'matchPercentage': 92,
@@ -39,9 +39,11 @@ class HistoryScreen extends StatelessWidget {
         'date': 'March 20, 2025',
         'condition': 'Healthy Nail',
         'confidence': '98%',
-        'statusText': 'Healthy',
-        'badgeBg': const Color(0xFFDCFCE7),
-        'badgeText': AppColors.success,
+        'region': 'Right Thumb',
+        'action': 'Routine Care',
+        'titleColor': AppColors.textPrimary,
+        'badgeBg': AppColors.secondaryBg,
+        'badgeText': AppColors.primary,
         'reportParams': {
           'conditionName': 'Healthy Nail',
           'matchPercentage': 98,
@@ -56,9 +58,11 @@ class HistoryScreen extends StatelessWidget {
         'date': 'Feb 18, 2025',
         'condition': 'Nail Psoriasis',
         'confidence': '85%',
-        'statusText': 'Moderate',
-        'badgeBg': const Color(0xFFFEF3C7),
-        'badgeText': AppColors.warning,
+        'region': 'Left Thumb',
+        'action': 'Dermatologist Consult',
+        'titleColor': const Color(0xFF8C5333),
+        'badgeBg': const Color(0xFFFEE2E2),
+        'badgeText': AppColors.error,
         'reportParams': {
           'conditionName': 'Nail Psoriasis',
           'matchPercentage': 85,
@@ -76,43 +80,46 @@ class HistoryScreen extends StatelessWidget {
       appBar: CustomAppBar(
         title: 'Analysis History',
         onBackPressed: onBackPressed,
+        showNotification: true,
       ),
       body: SafeArea(
         child: Column(
           children: [
-            // Filter Bar
+            // 2. Action Filter Bar
             Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.screenPadding,
-                vertical: 12.0,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    '${historyData.length} results',
-                    style: AppTypography.caption,
+                  const Text(
+                    'Showing all past nail analysis entries',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: AppColors.textSecondary,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: AppColors.border),
+                      border: Border.all(color: const Color(0xFFE2E8F0)),
                     ),
-                    child: Row(
+                    child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.filter_list_rounded,
                           color: AppColors.textPrimary,
                           size: 16,
                         ),
-                        const SizedBox(width: 6),
+                        SizedBox(width: 6),
                         Text(
                           'Filter',
-                          style: AppTypography.caption.copyWith(
-                            fontWeight: FontWeight.bold,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w800,
                             color: AppColors.textPrimary,
                           ),
                         ),
@@ -122,17 +129,12 @@ class HistoryScreen extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 16),
 
-            // Timeline Entries List
+            // 3. Timeline Entries List
             Expanded(
               child: ListView.builder(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.screenPadding,
-                  0.0,
-                  AppSpacing.screenPadding,
-                  80.0,
-                ),
+                padding: const EdgeInsets.fromLTRB(24.0, 0.0, 24.0, 80.0),
                 itemCount: historyData.length,
                 itemBuilder: (context, index) {
                   final item = historyData[index];
@@ -140,127 +142,247 @@ class HistoryScreen extends StatelessWidget {
                   final bool isLast = index == historyData.length - 1;
 
                   return IntrinsicHeight(
-                    child: FadeSlideWidget(
-                      delay: Duration(milliseconds: 50 * index),
-                      slideDistance: 8.0,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          // Left Timeline Column
-                          SizedBox(
-                            width: 32,
-                            child: Stack(
-                              alignment: Alignment.topCenter,
-                              children: [
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        // Left Timeline Column
+                        SizedBox(
+                          width: 32,
+                          child: Stack(
+                            alignment: Alignment.topCenter,
+                            children: [
+                              // Connector line
+                              Positioned(
+                                top: isFirst ? 14 : 0,
+                                bottom: isLast ? 0 : 0,
+                                child: Container(
+                                  width: 2,
+                                  decoration: BoxDecoration(
+                                    color: isLast
+                                        ? Colors.transparent
+                                        : const Color(0xFFE2E8F0),
+                                  ),
+                                ),
+                              ),
+                              if (isLast)
                                 Positioned(
                                   top: 0,
-                                  bottom: isLast ? 20 : 0,
+                                  bottom: 14,
                                   child: Container(
                                     width: 2,
                                     color: const Color(0xFFE2E8F0),
                                   ),
                                 ),
-                                Positioned(
-                                  top: 6,
-                                  child: Container(
-                                    width: 10,
-                                    height: 10,
-                                    decoration: BoxDecoration(
-                                      color: isFirst
-                                          ? AppColors.primary
-                                          : const Color(0xFFCBD5E1),
-                                      shape: BoxShape.circle,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-
-                          // Right Details Column & Card
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Date Header
-                                Text(
-                                  item['date'].toString().toUpperCase(),
-                                  style: AppTypography.overline.copyWith(
-                                    color: AppColors.textTertiary,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-
-                                // Report Card
-                                AppCard(
-                                  padding: const EdgeInsets.all(16.0),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      // Row 1: Condition and Status Badge
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            item['condition'],
-                                            style: AppTypography.cardTitle,
+                              // Bullet Dot
+                              Positioned(
+                                top: 6,
+                                child: isFirst
+                                    ? Container(
+                                        width: 16,
+                                        height: 16,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: AppColors.primary,
+                                            width: 4,
                                           ),
-                                          Container(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 10,
-                                              vertical: 4,
+                                        ),
+                                      )
+                                    : Container(
+                                        width: 10,
+                                        height: 10,
+                                        decoration: const BoxDecoration(
+                                          color: Color(0xFFCBD5E1),
+                                          shape: BoxShape.circle,
+                                        ),
+                                      ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+
+                        // Right Details Column & Card
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Date Header
+                              Text(
+                                item['date'],
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w800,
+                                  color: AppColors.textPrimary,
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+
+                              // Report Card
+                              AppCard(
+                                padding: const EdgeInsets.all(20.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Row 1: Upper labels
+                                    const Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          'CONDITION DETECTED',
+                                          style: TextStyle(
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w700,
+                                            color: AppColors.placeholder,
+                                            letterSpacing: 0.5,
+                                          ),
+                                        ),
+                                        Text(
+                                          'CONFIDENCE SCORE',
+                                          style: TextStyle(
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w700,
+                                            color: AppColors.placeholder,
+                                            letterSpacing: 0.5,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 6),
+
+                                    // Row 2: Title and badge
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          item['condition'],
+                                          style: TextStyle(
+                                            fontSize: 17,
+                                            fontWeight: FontWeight.w800,
+                                            color: item['titleColor'],
+                                          ),
+                                        ),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 12,
+                                            vertical: 4,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: item['badgeBg'],
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          child: Text(
+                                            item['confidence'],
+                                            style: TextStyle(
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.w800,
+                                              color: item['badgeText'],
                                             ),
-                                            decoration: BoxDecoration(
-                                              color: item['badgeBg'],
-                                              borderRadius: BorderRadius.circular(8),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const Divider(
+                                      color: AppColors.secondaryBg,
+                                      thickness: 1.5,
+                                      height: 24,
+                                    ),
+
+                                    // Row 3: Metadata columns
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            const Text(
+                                              'Analyzed Region',
+                                              style: AppTypography.caption,
                                             ),
-                                            child: Text(
-                                              item['statusText'].toString().toUpperCase(),
-                                              style: AppTypography.overline.copyWith(
-                                                color: item['badgeText'],
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              item['region'],
+                                              style: const TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w700,
+                                                color: AppColors.textPrimary,
                                               ),
                                             ),
+                                          ],
+                                        ),
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            const Text(
+                                              'Recommended Action',
+                                              style: AppTypography.caption,
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              item['action'],
+                                              style: const TextStyle(
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w700,
+                                                color: AppColors.textPrimary,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    const Divider(
+                                      color: AppColors.secondaryBg,
+                                      thickness: 1.5,
+                                      height: 24,
+                                    ),
+
+                                    // Row 4: View full report link
+                                    GestureDetector(
+                                      onTap: () {
+                                        final report = item['reportParams'] as Map<String, dynamic>;
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (_) => ResultScreen(
+                                              conditionName: report['conditionName'],
+                                              matchPercentage: report['matchPercentage'],
+                                              confidenceLabel: report['confidenceLabel'],
+                                              description: report['description'],
+                                              keySigns: report['keySigns'],
+                                              nextSteps: report['nextSteps'],
+                                              careTips: report['careTips'],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: const Row(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: [
+                                          Text(
+                                            'View full report',
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w800,
+                                              color: AppColors.primary,
+                                            ),
+                                          ),
+                                          SizedBox(width: 4),
+                                          Icon(
+                                            Icons.chevron_right_rounded,
+                                            color: AppColors.primary,
+                                            size: 16,
                                           ),
                                         ],
                                       ),
-                                      const SizedBox(height: 12),
-
-                                      // Row 2: View Report trigger link
-                                      GestureDetector(
-                                        onTap: () {
-                                          final report = item['reportParams'] as Map<String, dynamic>;
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder: (_) => ResultScreen(
-                                                conditionName: report['conditionName'],
-                                                matchPercentage: report['matchPercentage'],
-                                                confidenceLabel: report['confidenceLabel'],
-                                                description: report['description'],
-                                                keySigns: report['keySigns'],
-                                                nextSteps: report['nextSteps'],
-                                                careTips: report['careTips'],
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                        child: Text(
-                                          'View Report →',
-                                          style: AppTypography.caption.copyWith(
-                                            color: AppColors.primary,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
-                                const SizedBox(height: 24),
-                              ],
-                            ),
+                              ),
+                              const SizedBox(height: 28),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   );
                 },

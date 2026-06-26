@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../core/theme/colors.dart';
-import '../core/theme/radius.dart';
-import '../core/theme/typography.dart';
-import '../core/widgets/app_button.dart';
+import 'package:maroapp/core/theme/colors.dart';
+import 'package:maroapp/core/theme/radius.dart';
+import 'package:maroapp/core/theme/shadows.dart';
+import 'package:maroapp/core/widgets/app_button.dart';
 import 'main_navigation_shell.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -25,89 +25,50 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  Widget _buildMiniCrossEmblem() {
-    return SizedBox(
-      width: 24,
-      height: 24,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Container(
-            width: 24,
-            height: 6,
-            decoration: BoxDecoration(
-              color: AppColors.textPrimary,
-              borderRadius: BorderRadius.circular(1.5),
-            ),
-          ),
-          Container(
-            width: 6,
-            height: 24,
-            decoration: BoxDecoration(
-              color: AppColors.textPrimary,
-              borderRadius: BorderRadius.circular(1.5),
-            ),
-          ),
-          Container(
-            width: 6,
-            height: 6,
-            color: AppColors.textPrimary,
-          ),
-          Container(
-            width: 4,
-            height: 4,
-            decoration: const BoxDecoration(
-              color: AppColors.ai,
-              shape: BoxShape.circle,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 24.0),
+          padding: const EdgeInsets.symmetric(horizontal: 28.0, vertical: 24.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 20),
-              // Header: Cross icon + brand + subtitle
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildMiniCrossEmblem(),
-                  const SizedBox(width: 8),
-                  const Text(
-                    'AetherDX',
-                    style: AppTypography.heading1,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 6),
+              // Welcome Header
               const Text(
-                'Personal Health Log',
+                'Welcome back',
                 style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.textSecondary,
+                  fontSize: 30,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.textPrimary,
+                  letterSpacing: -0.5,
+                ),
+              ),
+              const SizedBox(height: 10),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0),
+                child: Text(
+                  'Access your orders, wishlist, and\nexclusive offers by logging in.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 15,
+                    color: AppColors.textSecondary,
+                    height: 1.4,
+                  ),
                 ),
               ),
               const SizedBox(height: 36),
 
-              // Email Input Module
+              // Email Input
               const Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Email address',
+                  'Email',
                   style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
                     color: AppColors.textPrimary,
                   ),
                 ),
@@ -117,30 +78,31 @@ class _LoginScreenState extends State<LoginScreen> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: AppRadius.inputBorderRadius,
-                  border: Border.all(color: AppColors.border),
+                  border: Border.all(color: const Color(0xFFE2E8F0)),
+                  boxShadow: [AppShadows.soft],
                 ),
                 child: TextField(
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
-                  style: const TextStyle(fontSize: 14, color: AppColors.textPrimary),
+                  style: const TextStyle(fontSize: 15, color: AppColors.textPrimary),
                   decoration: const InputDecoration(
-                    hintText: 'enter your email address',
-                    hintStyle: TextStyle(color: AppColors.placeholder, fontSize: 14),
+                    hintText: 'Enter your email',
+                    hintStyle: TextStyle(color: AppColors.placeholder, fontSize: 15),
                     border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 18),
                   ),
                 ),
               ),
               const SizedBox(height: 20),
 
-              // Password Input Module
+              // Password Input
               const Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Password',
                   style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
                     color: AppColors.textPrimary,
                   ),
                 ),
@@ -150,22 +112,22 @@ class _LoginScreenState extends State<LoginScreen> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: AppRadius.inputBorderRadius,
-                  border: Border.all(color: AppColors.border),
+                  border: Border.all(color: const Color(0xFFE2E8F0)),
+                  boxShadow: [AppShadows.soft],
                 ),
                 child: TextField(
                   controller: _passwordController,
                   obscureText: _obscurePassword,
-                  style: const TextStyle(fontSize: 14, color: AppColors.textPrimary),
+                  style: const TextStyle(fontSize: 15, color: AppColors.textPrimary),
                   decoration: InputDecoration(
-                    hintText: 'enter your password',
-                    hintStyle: const TextStyle(color: AppColors.placeholder, fontSize: 14),
+                    hintText: 'Enter your password',
+                    hintStyle: const TextStyle(color: AppColors.placeholder, fontSize: 15),
                     border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
                         color: AppColors.textSecondary,
-                        size: 20,
                       ),
                       onPressed: () {
                         setState(() {
@@ -178,7 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 18),
 
-              // Remember Me & Forgot Password Row
+              // Remember Me & Forgot Password
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -192,26 +154,26 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         AnimatedContainer(
                           duration: const Duration(milliseconds: 150),
-                          width: 20,
-                          height: 20,
+                          width: 22,
+                          height: 22,
                           decoration: BoxDecoration(
                             color: _rememberMe ? AppColors.primary : Colors.transparent,
                             borderRadius: BorderRadius.circular(6),
                             border: Border.all(
-                              color: _rememberMe ? AppColors.primary : AppColors.border,
-                              width: 1.5,
+                              color: _rememberMe ? AppColors.primary : const Color(0xFFCBD5E0),
+                              width: 2,
                             ),
                           ),
                           child: _rememberMe
-                              ? const Icon(Icons.check, size: 14, color: Colors.white)
+                              ? const Icon(Icons.check, size: 16, color: Colors.white)
                               : null,
                         ),
                         const SizedBox(width: 10),
                         const Text(
                           'Remember me',
                           style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
                             color: AppColors.textPrimary,
                           ),
                         ),
@@ -228,9 +190,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: const Text(
                       'Forgot password?',
                       style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.textSecondary,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.error,
                       ),
                     ),
                   ),
@@ -240,7 +202,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
               // Sign In Button
               AppButton(
-                text: 'Sign In',
+                text: 'Sign in',
                 onPressed: () {
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(builder: (_) => const MainNavigationShell()),
@@ -249,23 +211,27 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 28),
 
-              // OR Divider
+              // Divider
               Row(
                 children: [
-                  const Expanded(child: Divider(color: AppColors.border, thickness: 1)),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  Expanded(child: Divider(color: Colors.grey[200], thickness: 1.5)),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.0),
                     child: Text(
                       'OR',
-                      style: AppTypography.overline.copyWith(color: AppColors.placeholder),
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.placeholder,
+                      ),
                     ),
                   ),
-                  const Expanded(child: Divider(color: AppColors.border, thickness: 1)),
+                  Expanded(child: Divider(color: Colors.grey[200], thickness: 1.5)),
                 ],
               ),
               const SizedBox(height: 24),
 
-              // Social Sign Ins
+              // Continue with Google
               _buildSocialButton(
                 iconWidget: _buildGoogleLogo(),
                 label: 'Continue with Google',
@@ -275,9 +241,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   );
                 },
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 14),
+
+              // Continue with Apple
               _buildSocialButton(
-                iconWidget: const Icon(Icons.apple, size: 22, color: Colors.black),
+                iconWidget: const Icon(Icons.apple, size: 24, color: Colors.black),
                 label: 'Continue with Apple',
                 onTap: () {
                   Navigator.of(context).pushReplacement(
@@ -287,21 +255,21 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 36),
 
-              // Sign Up Footer
+              // Footer Sign Up
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text(
                     "Don't have an account? ",
-                    style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                    style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
                   ),
                   GestureDetector(
                     onTap: () {},
                     child: const Text(
                       'Sign up',
                       style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800,
                         color: AppColors.textPrimary,
                       ),
                     ),
@@ -324,29 +292,30 @@ class _LoginScreenState extends State<LoginScreen> {
     return SizedBox(
       width: double.infinity,
       height: 52,
-      child: OutlinedButton(
-        onPressed: onTap,
-        style: OutlinedButton.styleFrom(
-          backgroundColor: Colors.white,
-          side: const BorderSide(color: AppColors.border, width: 1.0),
-          shape: RoundedRectangleBorder(
-            borderRadius: AppRadius.buttonBorderRadius,
-          ),
+      child: Material(
+        color: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: AppRadius.buttonBorderRadius,
+          side: const BorderSide(color: Color(0xFFE2E8F0)),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            iconWidget,
-            const SizedBox(width: 12),
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: AppRadius.buttonBorderRadius,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              iconWidget,
+              const SizedBox(width: 12),
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -396,11 +365,16 @@ class _GoogleLogoPainter extends CustomPainter {
       ..strokeWidth = strokeWidth
       ..strokeCap = StrokeCap.butt;
 
+    // Blue: 0 deg (0.0 rad) to ~46 deg (0.80 rad)
     canvas.drawArc(arcRect, 0.0, 0.80, false, bluePaint);
+    // Green: 46 deg (0.80 rad) to 135 deg (2.35 rad) -> sweep = 1.55
     canvas.drawArc(arcRect, 0.80, 1.55, false, greenPaint);
+    // Yellow: 135 deg (2.35 rad) to 225 deg (3.93 rad) -> sweep = 1.58
     canvas.drawArc(arcRect, 2.35, 1.58, false, yellowPaint);
+    // Red: 225 deg (3.93 rad) to ~324 deg (5.65 rad) -> sweep = 1.72
     canvas.drawArc(arcRect, 3.93, 1.72, false, redPaint);
 
+    // Blue horizontal bar
     canvas.drawLine(
       Offset(center, center),
       Offset(center + radius + strokeWidth / 2, center),

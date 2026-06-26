@@ -8,9 +8,6 @@ class AppButton extends StatefulWidget {
   final VoidCallback onPressed;
   final bool isPrimary;
   final IconData? icon;
-  final Color? backgroundColor;
-  final Color? textColor;
-  final Color? borderColor;
 
   const AppButton({
     super.key,
@@ -18,9 +15,6 @@ class AppButton extends StatefulWidget {
     required this.onPressed,
     this.isPrimary = true,
     this.icon,
-    this.backgroundColor,
-    this.textColor,
-    this.borderColor,
   });
 
   @override
@@ -57,19 +51,13 @@ class _AppButtonState extends State<AppButton> with SingleTickerProviderStateMix
   Widget build(BuildContext context) {
     final reduced = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
 
-    final Color bgColor = widget.backgroundColor ?? (widget.isPrimary ? AppColors.primary : Colors.transparent);
-    final Color txtColor = widget.textColor ?? (widget.isPrimary ? Colors.white : AppColors.primary);
-    final Border? borderStyle = widget.borderColor != null
-        ? Border.all(color: widget.borderColor!, width: 1.0)
-        : (widget.isPrimary ? null : Border.all(color: AppColors.border, width: 1.0));
-
     Widget buttonBody = Container(
       width: double.infinity,
       height: 52,
       decoration: BoxDecoration(
-        color: bgColor,
+        color: widget.isPrimary ? AppColors.primary : Colors.transparent,
         borderRadius: AppRadius.buttonBorderRadius,
-        border: borderStyle,
+        border: widget.isPrimary ? null : Border.all(color: AppColors.primary, width: 1.5),
       ),
       child: Material(
         color: Colors.transparent,
@@ -92,7 +80,7 @@ class _AppButtonState extends State<AppButton> with SingleTickerProviderStateMix
                 Icon(
                   widget.icon,
                   size: 18,
-                  color: txtColor,
+                  color: widget.isPrimary ? Colors.white : AppColors.primary,
                 ),
                 const SizedBox(width: 8),
               ],
@@ -101,7 +89,7 @@ class _AppButtonState extends State<AppButton> with SingleTickerProviderStateMix
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
-                  color: txtColor,
+                  color: widget.isPrimary ? Colors.white : AppColors.primary,
                 ),
               ),
             ],

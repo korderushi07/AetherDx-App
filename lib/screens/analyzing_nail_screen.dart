@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
 import 'package:maroapp/core/theme/colors.dart';
 import 'package:maroapp/core/theme/typography.dart';
+import 'package:maroapp/core/theme/radius.dart';
+import 'package:maroapp/core/theme/shadows.dart';
+import 'package:maroapp/core/theme/spacing.dart';
 import 'package:maroapp/core/widgets/app_button.dart';
 import 'package:maroapp/core/widgets/app_card.dart';
+import 'package:maroapp/core/theme/motion.dart';
 import 'package:maroapp/core/widgets/animations.dart';
 import 'result_screen.dart';
 
@@ -25,8 +28,6 @@ class _AnalyzingNailScreenState extends State<AnalyzingNailScreen> {
   AnalysisStep _currentStep = AnalysisStep.imageConfirmed;
   double _progressValue = 0.0;
   bool _isCompleted = false;
-  Timer? _progressTimer;
-  int _elapsedMs = 0;
 
   @override
   void initState() {
@@ -34,64 +35,70 @@ class _AnalyzingNailScreenState extends State<AnalyzingNailScreen> {
     _startSequence();
   }
 
-  @override
-  void dispose() {
-    _progressTimer?.cancel();
-    super.dispose();
-  }
+  void _startSequence() async {
+    // Step 1: Image confirmed (starts immediately, checkmark fades in over 250ms)
+    // Hold step 1 for 1.2s to show verified status
+    await Future.delayed(const Duration(milliseconds: 1200));
+    if (!mounted) return;
+    setState(() {
+      _currentStep = AnalysisStep.scanning;
+    });
 
-  void _startSequence() {
-    const interval = Duration(milliseconds: 40);
-    _progressTimer = Timer.periodic(interval, (timer) {
-      _elapsedMs += 40;
-      if (!mounted) {
-        timer.cancel();
-        return;
-      }
-      setState(() {
-        if (_elapsedMs <= 1200) {
-          _currentStep = AnalysisStep.imageConfirmed;
-          _progressValue = (_elapsedMs / 1200.0) * 0.25;
-        } else if (_elapsedMs <= 3200) {
-          _currentStep = AnalysisStep.scanning;
-          _progressValue = 0.25 + (((_elapsedMs - 1200.0) / 2000.0) * 0.35);
-        } else if (_elapsedMs < 4000) {
-          _currentStep = AnalysisStep.progressing;
-          _progressValue = 0.60 + (((_elapsedMs - 3200.0) / 800.0) * 0.40);
-        } else {
-          _currentStep = AnalysisStep.revealed;
-          _progressValue = 1.0;
-          _isCompleted = true;
-          timer.cancel();
-        }
-      });
+    // Step 2: AI Scanning (subtle animated scan line, non-looping after 2s)
+    await Future.delayed(const Duration(milliseconds: 2000));
+    if (!mounted) return;
+    setState(() {
+      _currentStep = AnalysisStep.progressing;
+      _progressValue = 1.0;
+    });
+
+    // Step 3: Progress bar (0% -> 100%, 800ms, easeOutCubic)
+    await Future.delayed(const Duration(milliseconds: 800));
+    if (!mounted) return;
+    setState(() {
+      _currentStep = AnalysisStep.revealed;
+      _isCompleted = true;
     });
   }
 
-  String _getCenterLabel() {
+  String _getStepTitle() {
     switch (_currentStep) {
       case AnalysisStep.imageConfirmed:
-        return 'Validating';
+        return 'Image Confirmed';
       case AnalysisStep.scanning:
-        return 'Detecting';
+        return 'AI Scanning...';
       case AnalysisStep.progressing:
-        return 'Analyzing';
+        return 'Analyzing Patterns...';
       case AnalysisStep.revealed:
-        return 'Complete ✓';
+        return 'Analysis Complete!';
     }
   }
 
   String _getStepDescription() {
     switch (_currentStep) {
       case AnalysisStep.imageConfirmed:
-        return 'Checking image quality and clarity...';
+        return 'Nail photo quality checked and validated.';
       case AnalysisStep.scanning:
-        return 'Identifying surface patterns and texture...';
+        return 'Detecting patterns and comparing with medical database.';
       case AnalysisStep.progressing:
-        return 'Running neural diagnostic models...';
+        return 'Processing structures against classification models.';
       case AnalysisStep.revealed:
-        return 'Analysis complete. Report is ready.';
+        return 'Nail patterns successfully processed.';
     }
+  }
+
+  IconData _getStepIcon() {
+    if (_currentStep == AnalysisStep.revealed) {
+      return Icons.check_circle_outline_rounded;
+    }
+    return Icons.auto_awesome_outlined;
+  }
+
+  Color _getStepIconColor() {
+    if (_currentStep == AnalysisStep.revealed) {
+      return AppColors.success;
+    }
+    return AppColors.primary;
   }
 
   @override
@@ -100,11 +107,14 @@ class _AnalyzingNailScreenState extends State<AnalyzingNailScreen> {
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 24.0),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.screenPadding,
+            vertical: AppSpacing.screenPadding,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // Top Action Row
+              // Top Action Row (Back button & title space)
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -115,7 +125,8 @@ class _AnalyzingNailScreenState extends State<AnalyzingNailScreen> {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         shape: BoxShape.circle,
-                        border: Border.all(color: AppColors.border, width: 1.0),
+                        border: Border.all(color: const Color(0xFFE2E8F0)),
+                        boxShadow: [AppShadows.soft],
                       ),
                       child: const Icon(
                         Icons.arrow_back_ios_new_rounded,
@@ -126,110 +137,336 @@ class _AnalyzingNailScreenState extends State<AnalyzingNailScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 36),
+              const SizedBox(height: 16),
 
-              // Title and subtles
+              // Headers
               const Text(
                 'Analyzing Nail',
-                style: AppTypography.heading1,
+                style: AppTypography.screenTitle,
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 8),
               const Text(
-                'Our AI is processing your scan',
+                'Our AI is analyzing your nail image',
                 style: TextStyle(
                   fontSize: 14,
                   color: AppColors.textSecondary,
                 ),
               ),
-              const SizedBox(height: 48),
+              const SizedBox(height: 28),
 
-              // Centered Circular progress ring
-              Center(
-                child: AetherProgressRing(
-                  value: _progressValue,
-                  size: 180,
-                  strokeWidth: 4,
-                  color: AppColors.ai,
-                  backgroundColor: AppColors.secondaryBg,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      if (_isCompleted) ...[
-                        TweenAnimationBuilder<double>(
-                          tween: Tween<double>(begin: 0.9, end: 1.0),
-                          duration: const Duration(milliseconds: 250),
-                          curve: Curves.easeOutCubic,
-                          builder: (context, scale, child) {
-                            return Transform.scale(
-                              scale: scale,
-                              child: const Icon(
-                                Icons.check_circle_rounded,
-                                color: AppColors.success,
-                                size: 44,
+              // Viewfinder Scanner Section Card
+              AppCard(
+                backgroundColor: AppColors.secondaryBg,
+                padding: const EdgeInsets.all(24.0),
+                child: Center(
+                  child: Container(
+                    width: 230,
+                    height: 230,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: AppRadius.cardBorderRadius,
+                    ),
+                    child: ClipRRect(
+                      borderRadius: AppRadius.cardBorderRadius,
+                      child: Stack(
+                        children: [
+                          // 1. Captured Nail Image (reusing result image)
+                          Positioned.fill(
+                            child: Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: ClipRRect(
+                                borderRadius: AppRadius.imageBorderRadius,
+                                child: Image.asset(
+                                  'assets/images/nail_analysis_result.png',
+                                  fit: BoxFit.cover,
+                                ),
                               ),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 8),
-                        const Text(
-                          'Complete ✓',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.success,
+                            ),
                           ),
-                        ),
-                      ] else ...[
-                        Text(
-                          '${(_progressValue * 100).toInt()}%',
-                          style: AppTypography.display,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          _getCenterLabel(),
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
-                      ]
-                    ],
+
+                          // Image Confirmed Checkmark Overlay (Step 1)
+                          if (_currentStep == AnalysisStep.imageConfirmed)
+                            Positioned.fill(
+                              child: Container(
+                                color: Colors.black.withValues(alpha: 0.15),
+                                child: Center(
+                                  child: TweenAnimationBuilder<double>(
+                                    tween: Tween<double>(begin: 0.0, end: 1.0),
+                                    duration: const Duration(milliseconds: 250),
+                                    builder: (context, value, child) {
+                                      return Opacity(
+                                        opacity: value,
+                                        child: Transform.scale(
+                                          scale: 0.95 + (0.05 * value),
+                                          child: Container(
+                                            padding: const EdgeInsets.all(16),
+                                            decoration: const BoxDecoration(
+                                              color: Colors.white,
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: const Icon(
+                                              Icons.check_circle_rounded,
+                                              color: AppColors.success,
+                                              size: 48,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                          // 2. Corner Viewfinder Brackets (Step 2)
+                          if (_currentStep == AnalysisStep.scanning)
+                            Positioned.fill(
+                              child: LayoutBuilder(
+                                builder: (context, constraints) {
+                                  final double bracketSize = 24.0;
+                                  final double stroke = 4.0;
+                                  const Color bracketColor = AppColors.primary;
+
+                                  return Stack(
+                                    children: [
+                                      // Top Left
+                                      Positioned(
+                                        top: 16,
+                                        left: 16,
+                                        child: Container(
+                                          width: bracketSize,
+                                          height: bracketSize,
+                                          decoration: BoxDecoration(
+                                            border: Border(
+                                              top: BorderSide(color: bracketColor, width: stroke),
+                                              left: BorderSide(color: bracketColor, width: stroke),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      // Top Right
+                                      Positioned(
+                                        top: 16,
+                                        right: 16,
+                                        child: Container(
+                                          width: bracketSize,
+                                          height: bracketSize,
+                                          decoration: BoxDecoration(
+                                            border: Border(
+                                              top: BorderSide(color: bracketColor, width: stroke),
+                                              right: BorderSide(color: bracketColor, width: stroke),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      // Bottom Left
+                                      Positioned(
+                                        bottom: 16,
+                                        left: 16,
+                                        child: Container(
+                                          width: bracketSize,
+                                          height: bracketSize,
+                                          decoration: BoxDecoration(
+                                            border: Border(
+                                              bottom: BorderSide(color: bracketColor, width: stroke),
+                                              left: BorderSide(color: bracketColor, width: stroke),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      // Bottom Right
+                                      Positioned(
+                                        bottom: 16,
+                                        right: 16,
+                                        child: Container(
+                                          width: bracketSize,
+                                          height: bracketSize,
+                                          decoration: BoxDecoration(
+                                            border: Border(
+                                              bottom: BorderSide(color: bracketColor, width: stroke),
+                                              right: BorderSide(color: bracketColor, width: stroke),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ),
+                            ),
+                          // 3. Triple Horizontal Cyan Laser Lines
+                          if (_currentStep == AnalysisStep.scanning)
+                            Positioned.fill(
+                              child: TweenAnimationBuilder<double>(
+                                tween: Tween<double>(begin: 0.05, end: 0.95),
+                                duration: const Duration(seconds: 2),
+                                builder: (context, value, child) {
+                                  return Stack(
+                                    children: [
+                                      Positioned(
+                                        top: value * 230.0,
+                                        left: 12,
+                                        right: 12,
+                                        child: _buildLaserLine(),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               ),
-              const SizedBox(height: 48),
+              const SizedBox(height: 32),
 
-              // Status card with step description
+              // Status Block (Analyzing details)
               AppCard(
-                width: double.infinity,
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                child: Text(
-                  _getStepDescription(),
-                  style: AppTypography.body,
-                  textAlign: TextAlign.center,
+                child: Row(
+                  children: [
+                    // Circular indicator badge
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: _isCompleted ? const Color(0xFFDCFCE7) : AppColors.secondaryBg,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        _getStepIcon(),
+                        color: _getStepIconColor(),
+                        size: 22,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _getStepTitle(),
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w800,
+                              color: AppColors.primary,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            _getStepDescription(),
+                            style: const TextStyle(
+                              fontSize: 13,
+                              color: AppColors.textSecondary,
+                              height: 1.3,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 48),
+              const SizedBox(height: 32),
 
-              // Bottom action button revealed at completion
-              AnimatedOpacity(
-                opacity: _isCompleted ? 1.0 : 0.0,
-                duration: const Duration(milliseconds: 250),
-                child: _isCompleted
-                    ? AppButton(
-                        text: 'View Diagnostics',
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(builder: (_) => const ResultScreen()),
-                          );
-                        },
-                      )
-                    : const SizedBox(height: 52),
+              // Progress Bar Row
+              Row(
+                children: [
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: AnimatedProgressBar(
+                        value: _progressValue,
+                        minHeight: 12,
+                        backgroundColor: const Color(0xFFE2E8F0),
+                        valueColor: AppColors.primary,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  SizedBox(
+                    width: 45,
+                    child: TweenAnimationBuilder<double>(
+                      tween: Tween<double>(begin: 0.0, end: _progressValue),
+                      duration: const Duration(milliseconds: 800),
+                      curve: AetherMotion.enter,
+                      builder: (context, value, child) {
+                        return Text(
+                          '${(value * 100).toInt()}%',
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.primary,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 40),
+
+              // View Results Action Button when completed
+              if (_isCompleted)
+                FadeSlideWidget(
+                  delay: const Duration(milliseconds: 100),
+                  slideDistance: AetherMotion.slideDistanceSmall,
+                  child: AppButton(
+                    text: 'View Results',
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const ResultScreen()),
+                      );
+                    },
+                  ),
+                ),
+
+              const SizedBox(height: 24),
+              // Bottom Info Capsule
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  color: AppColors.secondaryBg,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.access_time_rounded,
+                      color: AppColors.textSecondary,
+                      size: 16,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'This usually takes 10–15 seconds',
+                      style: AppTypography.caption.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildLaserLine() {
+    return Container(
+      height: 3,
+      decoration: BoxDecoration(
+        color: const Color(0xFF49C3DF),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF49C3DF).withValues(alpha: 0.8),
+            blurRadius: 8,
+            spreadRadius: 2,
+          ),
+        ],
       ),
     );
   }
