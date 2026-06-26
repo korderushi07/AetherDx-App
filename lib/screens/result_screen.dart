@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'specialists_screen.dart';
 import 'educational_screen.dart';
+import 'nutrition_lifestyle_screen.dart';
 
 class ResultScreen extends StatelessWidget {
   final String conditionName;
@@ -260,6 +261,34 @@ class ResultScreen extends StatelessWidget {
                                   icon: Icons.description_outlined,
                                   title: 'General Care Tips',
                                   description: careTips,
+                                ),
+                                const SizedBox(height: 12),
+                                Row(
+                                  children: [
+                                    const SizedBox(width: 44),
+                                    const Icon(Icons.spa_outlined, color: purpleAccent, size: 16),
+                                    const SizedBox(width: 6),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(builder: (_) => const NutritionLifestyleScreen()),
+                                        );
+                                      },
+                                      style: TextButton.styleFrom(
+                                        padding: EdgeInsets.zero,
+                                        minimumSize: Size.zero,
+                                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                      ),
+                                      child: const Text(
+                                        'View Nutrition & Lifestyle Suggestions',
+                                        style: TextStyle(
+                                          color: purpleAccent,
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),

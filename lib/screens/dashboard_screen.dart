@@ -398,78 +398,85 @@ class _DashboardScreenState extends State<DashboardScreen> {
               const SizedBox(height: 24),
 
               // Card 3: Educational Guide
-              Container(
-                padding: const EdgeInsets.all(22.0),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFE6F4F6),
-                  borderRadius: BorderRadius.circular(28),
-                  border: Border.all(color: const Color(0xFFD0ECF0), width: 1.5),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: const BoxDecoration(
-                            color: Color(0xFFCBE5EE),
-                            shape: BoxShape.circle,
+              GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const EducationalScreen()),
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(22.0),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE6F4F6),
+                    borderRadius: BorderRadius.circular(28),
+                    border: Border.all(color: const Color(0xFFD0ECF0), width: 1.5),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: const BoxDecoration(
+                              color: Color(0xFFCBE5EE),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.menu_book_outlined,
+                              color: Color(0xFF1F484C),
+                              size: 18,
+                            ),
                           ),
-                          child: const Icon(
-                            Icons.menu_book_outlined,
-                            color: Color(0xFF1F484C),
-                            size: 18,
+                          const SizedBox(width: 8),
+                          const Text(
+                            'Nail Health Guide',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w800,
+                              color: Color(0xFF1F484C),
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                        const Text(
-                          'Nail Health Guide',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w800,
-                            color: Color(0xFF1F484C),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    const Text(
-                      'Understand nail conditions, recognize symptoms early, and discover daily preventive guidelines.',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Color(0xFF5A7B81),
-                        height: 1.35,
+                        ],
                       ),
-                    ),
-                    const SizedBox(height: 18),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 52,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(builder: (_) => const EducationalScreen()),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: const Color(0xFF1F484C),
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(26),
-                          ),
-                        ),
-                        child: const Text(
-                          'Read Guide',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w800,
-                          ),
+                      const SizedBox(height: 12),
+                      const Text(
+                        'Understand nail conditions, recognize symptoms early, and discover daily preventive guidelines.',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Color(0xFF5A7B81),
+                          height: 1.35,
                         ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 18),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 52,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(builder: (_) => const EducationalScreen()),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: const Color(0xFF1F484C),
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(26),
+                            ),
+                          ),
+                          child: const Text(
+                            'Read Guide',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: 80), // spacer for bottom nav bar
