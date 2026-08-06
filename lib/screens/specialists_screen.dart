@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:maroapp/core/theme/colors.dart';
-import 'package:maroapp/core/theme/typography.dart';
-import 'package:maroapp/core/theme/radius.dart';
-import 'package:maroapp/core/theme/spacing.dart';
-import 'package:maroapp/core/widgets/app_bar.dart';
-import 'package:maroapp/core/widgets/app_button.dart';
-import 'package:maroapp/core/widgets/app_card.dart';
+import 'package:aetherdx/core/theme/colors.dart';
+import 'package:aetherdx/core/theme/typography.dart';
+import 'package:aetherdx/core/theme/radius.dart';
+import 'package:aetherdx/core/theme/spacing.dart';
+import 'package:aetherdx/core/localization/translations.dart';
+import 'package:aetherdx/core/widgets/app_bar.dart';
+import 'package:aetherdx/core/widgets/app_button.dart';
+import 'package:aetherdx/core/widgets/app_card.dart';
 
 class SpecialistsScreen extends StatelessWidget {
   const SpecialistsScreen({super.key});
@@ -15,9 +16,9 @@ class SpecialistsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: CustomAppBar(
-        title: 'Medcare',
+        title: 'Nearby Specialists'.tr(),
         onBackPressed: () => Navigator.of(context).pop(),
-        showNotification: true,
+        showNotification: false,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -27,14 +28,14 @@ class SpecialistsScreen extends StatelessWidget {
             children: [
               const SizedBox(height: 12),
               // Header text
-              const Text(
-                'Recommended Specialists',
+              Text(
+                'Recommended Specialists'.tr(),
                 style: AppTypography.screenTitle,
               ),
               const SizedBox(height: 10),
-              const Text(
-                'Based on your recent nail health analysis indicating a potential fungal infection, we recommend consulting these nearby specialists.',
-                style: TextStyle(
+              Text(
+                'Based on your recent nail health analysis indicating a potential fungal infection, we recommend consulting these nearby specialists.'.tr(),
+                style: const TextStyle(
                   fontSize: 14,
                   color: AppColors.textSecondary,
                   height: 1.4,
@@ -64,9 +65,9 @@ class SpecialistsScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 12),
-                        const Text(
-                          'DERMATOLOGISTS',
-                          style: TextStyle(
+                        Text(
+                          'DERMATOLOGISTS'.tr(),
+                          style: const TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.w900,
                             color: AppColors.primary,
@@ -81,15 +82,15 @@ class SpecialistsScreen extends StatelessWidget {
                     _buildDoctorCard(
                       context,
                       imageUrl: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=300',
-                      name: 'Dr. Elena Rostova',
-                      specialty: 'SKIN & NAIL SPECIALIST',
-                      distance: '1.2 miles away',
-                      buttonText: 'Book Appointment',
+                      name: 'Dr. Elena Rostova'.tr(),
+                      specialty: 'SKIN & NAIL SPECIALIST'.tr(),
+                      distance: '1.2 miles away'.tr(),
+                      buttonText: 'Book Appointment'.tr(),
                       isPrimaryButton: true,
                       onButtonPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Appointment booking sheet opened'),
+                          SnackBar(
+                            content: Text('Appointment booking sheet opened'.tr()),
                             backgroundColor: AppColors.primary,
                           ),
                         );
@@ -101,15 +102,15 @@ class SpecialistsScreen extends StatelessWidget {
                     _buildDoctorCard(
                       context,
                       imageUrl: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=300',
-                      name: 'Dr. Marcus Lin',
-                      specialty: 'DERMATOLOGY',
-                      distance: '3.4 miles away',
-                      buttonText: 'View Profile',
+                      name: 'Dr. Marcus Lin'.tr(),
+                      specialty: 'DERMATOLOGY'.tr(),
+                      distance: '3.4 miles away'.tr(),
+                      buttonText: 'View Profile'.tr(),
                       isPrimaryButton: false,
                       onButtonPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Profile opened'),
+                          SnackBar(
+                            content: Text('Profile opened'.tr()),
                             backgroundColor: AppColors.primary,
                           ),
                         );
@@ -124,15 +125,22 @@ class SpecialistsScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Nearby Clinics',
+                  Text(
+                    'Nearby Clinics'.tr(),
                     style: AppTypography.sectionHeading,
                   ),
                   TextButton(
-                    onPressed: () {},
-                    child: const Text(
-                      'SEE ALL',
-                      style: TextStyle(
+                    onPressed: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Viewing all nearby clinics'.tr()),
+                          backgroundColor: AppColors.primary,
+                        ),
+                      );
+                    },
+                    child: Text(
+                      'SEE ALL'.tr(),
+                      style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w800,
                         color: AppColors.primary,
@@ -174,14 +182,14 @@ class SpecialistsScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
-                                'Apex Dermatology & Clinic',
+                              Text(
+                                'Apex Dermatology & Clinic'.tr(),
                                 style: AppTypography.cardTitle,
                               ),
                               const SizedBox(height: 4),
-                              const Text(
-                                '100 Medical Plaza, Suite 250',
-                                style: TextStyle(
+                              Text(
+                                '100 Medical Plaza, Suite 250'.tr(),
+                                style: const TextStyle(
                                   fontSize: 13,
                                   color: AppColors.textSecondary,
                                 ),
@@ -193,24 +201,24 @@ class SpecialistsScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 16),
                     // Clinic details row (0.8 mi, 4.8)
-                    const Row(
+                    Row(
                       children: [
-                        Icon(Icons.map_outlined, size: 16, color: AppColors.textSecondary),
-                        SizedBox(width: 4),
+                        const Icon(Icons.map_outlined, size: 16, color: AppColors.textSecondary),
+                        const SizedBox(width: 4),
                         Text(
-                          '0.8 mi',
-                          style: TextStyle(
+                          '0.8 mi'.tr(),
+                          style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                             color: AppColors.textSecondary,
                           ),
                         ),
-                        SizedBox(width: 16),
-                        Icon(Icons.star_rounded, size: 16, color: AppColors.warning),
-                        SizedBox(width: 4),
+                        const SizedBox(width: 16),
+                        const Icon(Icons.star_rounded, size: 16, color: AppColors.warning),
+                        const SizedBox(width: 4),
                         Text(
-                          '4.8',
-                          style: TextStyle(
+                          '4.8'.tr(),
+                          style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                             color: AppColors.textSecondary,
@@ -224,19 +232,33 @@ class SpecialistsScreen extends StatelessWidget {
                       children: [
                         Expanded(
                           child: AppButton(
-                            text: 'Call',
+                            text: 'Call'.tr(),
                             icon: Icons.phone_outlined,
                             isPrimary: false,
-                            onPressed: () {},
+                            onPressed: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Calling Apex Dermatology & Clinic: +1 (555) 123-4567'.tr()),
+                                  backgroundColor: AppColors.primary,
+                                ),
+                              );
+                            },
                           ),
                         ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: AppButton(
-                            text: 'Directions',
+                            text: 'Directions'.tr(),
                             icon: Icons.explore_outlined,
                             isPrimary: false,
-                            onPressed: () {},
+                            onPressed: () {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text('Opening Google Maps directions to Apex Dermatology'.tr()),
+                                  backgroundColor: AppColors.primary,
+                                ),
+                              );
+                            },
                           ),
                         ),
                       ],
@@ -293,12 +315,12 @@ class SpecialistsScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      name,
+                      name.tr(),
                       style: AppTypography.cardTitle,
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      specialty,
+                      specialty.tr(),
                       style: const TextStyle(
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
@@ -313,7 +335,7 @@ class SpecialistsScreen extends StatelessWidget {
                         const Icon(Icons.location_on_outlined, size: 14, color: AppColors.primary),
                         const SizedBox(width: 4),
                         Text(
-                          distance,
+                          distance.tr(),
                           style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
@@ -330,7 +352,7 @@ class SpecialistsScreen extends StatelessWidget {
           const SizedBox(height: 16),
           // Action button
           AppButton(
-            text: buttonText,
+            text: buttonText.tr(),
             isPrimary: isPrimaryButton,
             icon: isPrimaryButton ? Icons.calendar_month_outlined : null,
             onPressed: onButtonPressed,

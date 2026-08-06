@@ -1,9 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:maroapp/screens/splash_screen.dart';
-import 'package:maroapp/core/theme/app_theme.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:aetherdx/screens/splash_screen.dart';
+import 'package:aetherdx/core/theme/app_theme.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
   runApp(const MyApp());
+}
+
+class BouncyScrollBehavior extends MaterialScrollBehavior {
+  @override
+  ScrollPhysics getScrollPhysics(BuildContext context) {
+    return const BouncingScrollPhysics(
+      parent: AlwaysScrollableScrollPhysics(),
+    );
+  }
 }
 
 class MyApp extends StatelessWidget {
@@ -15,6 +27,7 @@ class MyApp extends StatelessWidget {
       title: 'Medcare App',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
+      scrollBehavior: BouncyScrollBehavior(),
       home: const SplashScreen(),
     );
   }

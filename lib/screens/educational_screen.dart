@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:maroapp/core/theme/colors.dart';
-import 'package:maroapp/core/theme/typography.dart';
-import 'package:maroapp/core/theme/spacing.dart';
-import 'package:maroapp/core/theme/radius.dart';
-import 'package:maroapp/core/widgets/app_bar.dart';
-import 'package:maroapp/core/widgets/app_button.dart';
-import 'package:maroapp/core/widgets/app_card.dart';
-import 'package:maroapp/core/widgets/section_title.dart';
+import 'package:aetherdx/core/theme/colors.dart';
+import 'package:aetherdx/core/theme/typography.dart';
+import 'package:aetherdx/core/theme/spacing.dart';
+import 'package:aetherdx/core/theme/radius.dart';
+import 'package:aetherdx/core/localization/translations.dart';
+import 'package:aetherdx/core/widgets/app_bar.dart';
+import 'package:aetherdx/core/widgets/app_button.dart';
+import 'package:aetherdx/core/widgets/app_card.dart';
+import 'package:aetherdx/core/widgets/section_title.dart';
 import 'specialists_screen.dart';
 
 class EducationalScreen extends StatelessWidget {
@@ -17,7 +18,7 @@ class EducationalScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: CustomAppBar(
-        title: 'Medcare',
+        title: 'Educational Guide'.tr(),
         onBackPressed: () => Navigator.of(context).pop(),
       ),
       body: SafeArea(
@@ -54,9 +55,9 @@ class EducationalScreen extends StatelessWidget {
                   color: AppColors.secondaryBg,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Text(
-                  'Nail Health Guide',
-                  style: TextStyle(
+                child: Text(
+                  'Nail Health Guide'.tr(),
+                  style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w800,
                     color: AppColors.primary,
@@ -66,15 +67,15 @@ class EducationalScreen extends StatelessWidget {
               const SizedBox(height: AppSpacing.gapMedium),
 
               // Title
-              const Text(
-                'Understanding Fungal Infections',
+              Text(
+                'Understanding Fungal Infections'.tr(),
                 style: AppTypography.screenTitle,
               ),
               const SizedBox(height: AppSpacing.gapSmall),
 
               // Subtitle
-              const Text(
-                'A comprehensive overview of common nail conditions, their early indicators, and effective management strategies for optimal health.',
+              Text(
+                'A comprehensive overview of common nail conditions, their early indicators, and effective management strategies for optimal health.'.tr(),
                 style: TextStyle(
                   fontSize: 14,
                   color: AppColors.textSecondary,
@@ -84,8 +85,8 @@ class EducationalScreen extends StatelessWidget {
               const SizedBox(height: AppSpacing.sectionSpace),
 
               // Symptoms Overview Header
-              const SectionTitle(
-                title: 'Symptoms Overview',
+              SectionTitle(
+                title: 'Symptoms Overview'.tr(),
                 trailing: Icon(Icons.query_stats_rounded, color: AppColors.primary, size: 20),
               ),
               const SizedBox(height: AppSpacing.gapMedium),
@@ -132,22 +133,22 @@ class EducationalScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    const Expanded(
+                    Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Early Detection',
-                            style: TextStyle(
+                            'Early Detection'.tr(),
+                            style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w800,
                               color: AppColors.primary,
                             ),
                           ),
-                          SizedBox(height: 4),
+                          const SizedBox(height: 4),
                           Text(
-                            'Identifying these symptoms early significantly improves the efficacy of treatment and reduces recovery time.',
-                            style: TextStyle(
+                            'Identifying these symptoms early significantly improves the efficacy of treatment and reduces recovery time.'.tr(),
+                            style: const TextStyle(
                               fontSize: 13,
                               color: AppColors.primary,
                               height: 1.35,
@@ -162,26 +163,26 @@ class EducationalScreen extends StatelessWidget {
               const SizedBox(height: AppSpacing.sectionSpace),
 
               // Condition Awareness Header
-              const SectionTitle(title: 'Condition Awareness'),
+              SectionTitle(title: 'Condition Awareness'.tr()),
               const SizedBox(height: AppSpacing.gapMedium),
 
               // Condition Awareness Card Description
-              const AppCard(
+              AppCard(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Onychomycosis, commonly known as a fungal nail infection, is a prevalent condition that begins as a white or yellow spot under the tip of your fingernail or toenail. As the fungal infection goes deeper, it may cause the nail to discolor, thicken, and crumble at the edge.',
-                      style: TextStyle(
+                      'Onychomycosis, commonly known as a fungal nail infection, is a prevalent condition that begins as a white or yellow spot under the tip of your fingernail or toenail. As the fungal infection goes deeper, it may cause the nail to discolor, thicken, and crumble at the edge.'.tr(),
+                      style: const TextStyle(
                         fontSize: 14,
                         color: AppColors.textSecondary,
                         height: 1.45,
                       ),
                     ),
-                    SizedBox(height: 12),
+                    const SizedBox(height: 12),
                     Text(
-                      'While often harmless in early stages, prolonged neglect can lead to discomfort and permanent damage to the nail bed. It\'s crucial to maintain proper hygiene and monitor any changes in your nail\'s appearance or texture.',
-                      style: TextStyle(
+                      'While often harmless in early stages, prolonged neglect can lead to discomfort and permanent damage to the nail bed. It\'s crucial to maintain proper hygiene and monitor any changes in your nail\'s appearance or texture.'.tr(),
+                      style: const TextStyle(
                         fontSize: 14,
                         color: AppColors.textSecondary,
                         height: 1.45,
@@ -193,7 +194,7 @@ class EducationalScreen extends StatelessWidget {
               const SizedBox(height: AppSpacing.sectionSpace),
 
               // Dietary Recommendations Section
-              const SectionTitle(title: 'Dietary Recommendations'),
+              SectionTitle(title: 'Dietary Recommendations'.tr()),
               const SizedBox(height: AppSpacing.gapMedium),
 
               // Dietary List Items
@@ -237,9 +238,9 @@ class EducationalScreen extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 12),
-                        const Text(
-                          'When to consult a doctor',
-                          style: TextStyle(
+                        Text(
+                          'When to consult a doctor'.tr(),
+                          style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w800,
                             color: AppColors.error,
@@ -248,9 +249,9 @@ class EducationalScreen extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 14),
-                    const Text(
-                      'If self-care steps haven\'t helped, and the nail becomes increasingly discolored, thickened, or deformed. Also seek medical advice if you have diabetes and suspect an infection.',
-                      style: TextStyle(
+                    Text(
+                      'If self-care steps haven\'t helped, and the nail becomes increasingly discolored, thickened, or deformed. Also seek medical advice if you have diabetes and suspect an infection.'.tr(),
+                      style: const TextStyle(
                         fontSize: 13,
                         color: AppColors.error,
                         height: 1.45,
@@ -259,7 +260,7 @@ class EducationalScreen extends StatelessWidget {
                     const SizedBox(height: 20),
                     // Find a Doctor Button
                     AppButton(
-                      text: 'Find a Doctor',
+                      text: 'Find a Doctor'.tr(),
                       onPressed: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(builder: (_) => const SpecialistsScreen()),
@@ -298,13 +299,13 @@ class EducationalScreen extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           Text(
-            title,
+            title.tr(),
             style: AppTypography.cardTitle,
           ),
           const SizedBox(height: 6),
           Expanded(
             child: Text(
-              description,
+              description.tr(),
               maxLines: 4,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
@@ -350,12 +351,12 @@ class EducationalScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    title,
+                    title.tr(),
                     style: AppTypography.cardTitle,
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    description,
+                    description.tr(),
                     style: const TextStyle(
                       fontSize: 13,
                       color: AppColors.textSecondary,

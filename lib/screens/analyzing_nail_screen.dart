@@ -1,13 +1,17 @@
+import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:maroapp/core/theme/colors.dart';
-import 'package:maroapp/core/theme/typography.dart';
-import 'package:maroapp/core/theme/radius.dart';
-import 'package:maroapp/core/theme/shadows.dart';
-import 'package:maroapp/core/theme/spacing.dart';
-import 'package:maroapp/core/widgets/app_button.dart';
-import 'package:maroapp/core/widgets/app_card.dart';
-import 'package:maroapp/core/theme/motion.dart';
-import 'package:maroapp/core/widgets/animations.dart';
+import 'package:aetherdx/core/theme/colors.dart';
+import 'package:aetherdx/core/theme/typography.dart';
+import 'package:aetherdx/core/theme/radius.dart';
+import 'package:aetherdx/core/theme/shadows.dart';
+import 'package:aetherdx/core/theme/spacing.dart';
+import 'package:aetherdx/core/widgets/app_button.dart';
+import 'package:aetherdx/core/widgets/app_card.dart';
+import 'package:aetherdx/core/theme/motion.dart';
+import 'package:aetherdx/core/widgets/animations.dart';
+import 'package:aetherdx/core/network/api_service.dart';
+import 'image_quality_alert_screen.dart';
 import 'result_screen.dart';
 
 enum AnalysisStep {
@@ -18,7 +22,13 @@ enum AnalysisStep {
 }
 
 class AnalyzingNailScreen extends StatefulWidget {
-  const AnalyzingNailScreen({super.key});
+  final String imagePath;
+  final Uint8List? imageBytes;
+  const AnalyzingNailScreen({
+    super.key,
+    required this.imagePath,
+    this.imageBytes,
+  });
 
   @override
   State<AnalyzingNailScreen> createState() => _AnalyzingNailScreenState();
@@ -28,11 +38,51 @@ class _AnalyzingNailScreenState extends State<AnalyzingNailScreen> {
   AnalysisStep _currentStep = AnalysisStep.imageConfirmed;
   double _progressValue = 0.0;
   bool _isCompleted = false;
+  Map<String, dynamic>? _predictionResult;
 
   @override
   void initState() {
     super.initState();
     _startSequence();
+  }
+
+  Map<String, dynamic> _mapModelResult(String predictedClass, double confidence) {
+    final int match = (confidence * 100).toInt();
+    final String confidenceLabel = confidence >= 0.85 ? 'High confidence' : 'Moderate confidence';
+    
+    switch (predictedClass) {
+      case 'Psoriasis':
+        return {
+          'conditionName': 'Nail Psoriasis',
+          'matchPercentage': match,
+          'confidenceLabel': confidenceLabel,
+          'description': 'A chronic autoimmune condition that affects nail cells, causing changes in appearance like pitting or scaling.',
+          'keySigns': 'Pitting, yellow-brown discoloration, and crumbling nail texture',
+          'nextSteps': 'Consult a dermatologist for a focused clinical skin examination',
+          'careTips': 'Keep your hands well-moisturized, trim nails straight, and avoid mechanical injury',
+        };
+      case 'Liver Disease':
+        return {
+          'conditionName': 'Terry\'s Nails (Possible Liver Health Sign)',
+          'matchPercentage': match,
+          'confidenceLabel': confidenceLabel,
+          'description': 'A structural nail change where the nail plate appears pale/white except for a thin dark band at the tip, which can correspond to metabolic or liver factors.',
+          'keySigns': 'Pale white nail bed, narrow pink/red distal band, loss of half-moon lunula',
+          'nextSteps': 'Consult a general practitioner or gastroenterologist for standard liver function tests',
+          'careTips': 'Maintain a balanced nutritious diet, limit sodium/saturated fats, and strictly avoid alcohol',
+        };
+      case 'Healthy':
+      default:
+        return {
+          'conditionName': 'Healthy Nails',
+          'matchPercentage': match,
+          'confidenceLabel': confidenceLabel,
+          'description': 'Your nail structure and texture appear completely normal and healthy, showing no signs of systemic conditions.',
+          'keySigns': 'Smooth and even nail plate, pink nail beds, firm and flexible tip',
+          'nextSteps': 'Maintain your current daily nail hygiene and healthy balanced diet',
+          'careTips': 'Keep hands clean and moisturized, avoid aggressive cleaning under nails, and let nails breathe between polishes',
+        };
+    }
   }
 
   void _startSequence() async {
@@ -44,21 +94,60 @@ class _AnalyzingNailScreenState extends State<AnalyzingNailScreen> {
       _currentStep = AnalysisStep.scanning;
     });
 
-    // Step 2: AI Scanning (subtle animated scan line, non-looping after 2s)
+    // Start backend API analysis call in the background
+    final apiFuture = ApiService.predictNail(
+      widget.imagePath,
+      imageBytes: widget.imageBytes,
+    );
+
+    // Step 2: AI Scanning (animated scan line, non-looping after 2s)
     await Future.delayed(const Duration(milliseconds: 2000));
     if (!mounted) return;
     setState(() {
       _currentStep = AnalysisStep.progressing;
-      _progressValue = 1.0;
+      _progressValue = 0.5; // Set to 50% while backend finishes
     });
 
-    // Step 3: Progress bar (0% -> 100%, 800ms, easeOutCubic)
-    await Future.delayed(const Duration(milliseconds: 800));
-    if (!mounted) return;
-    setState(() {
-      _currentStep = AnalysisStep.revealed;
-      _isCompleted = true;
-    });
+    try {
+      // Wait for prediction API to finish
+      final response = await apiFuture;
+      final predictedClass = response['predicted_class'] as String?;
+      final confidence = (response['confidence'] as num?)?.toDouble() ?? 0.0;
+
+      // Quality Warning Case: If confidence is too low (< 70%), route directly to alert screen
+      if (confidence < 0.70) {
+        if (mounted) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (_) => const ImageQualityAlertScreen()),
+          );
+        }
+        return;
+      }
+
+      // Populate prediction details
+      _predictionResult = _mapModelResult(predictedClass ?? 'Healthy', confidence);
+
+      // Finish progress animation (move progress value to 100%)
+      if (mounted) {
+        setState(() {
+          _progressValue = 1.0;
+        });
+        await Future.delayed(const Duration(milliseconds: 400));
+        if (mounted) {
+          setState(() {
+            _currentStep = AnalysisStep.revealed;
+            _isCompleted = true;
+          });
+        }
+      }
+    } catch (e) {
+      // On connection errors, server errors, or invalid responses, route to quality alert screen
+      if (mounted) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const ImageQualityAlertScreen()),
+        );
+      }
+    }
   }
 
   String _getStepTitle() {
@@ -170,16 +259,21 @@ class _AnalyzingNailScreenState extends State<AnalyzingNailScreen> {
                       borderRadius: AppRadius.cardBorderRadius,
                       child: Stack(
                         children: [
-                          // 1. Captured Nail Image (reusing result image)
+                          // 1. Captured Nail Image from file or memory source
                           Positioned.fill(
                             child: Padding(
                               padding: const EdgeInsets.all(12.0),
                               child: ClipRRect(
                                 borderRadius: AppRadius.imageBorderRadius,
-                                child: Image.asset(
-                                  'assets/images/nail_analysis_result.png',
-                                  fit: BoxFit.cover,
-                                ),
+                                child: widget.imageBytes != null
+                                    ? Image.memory(
+                                        widget.imageBytes!,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : Image.file(
+                                        File(widget.imagePath),
+                                        fit: BoxFit.cover,
+                                      ),
                               ),
                             ),
                           ),
@@ -408,7 +502,7 @@ class _AnalyzingNailScreenState extends State<AnalyzingNailScreen> {
               const SizedBox(height: 40),
 
               // View Results Action Button when completed
-              if (_isCompleted)
+              if (_isCompleted && _predictionResult != null)
                 FadeSlideWidget(
                   delay: const Duration(milliseconds: 100),
                   slideDistance: AetherMotion.slideDistanceSmall,
@@ -416,7 +510,17 @@ class _AnalyzingNailScreenState extends State<AnalyzingNailScreen> {
                     text: 'View Results',
                     onPressed: () {
                       Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const ResultScreen()),
+                        MaterialPageRoute(
+                          builder: (_) => ResultScreen(
+                            conditionName: _predictionResult!['conditionName'],
+                            matchPercentage: _predictionResult!['matchPercentage'],
+                            confidenceLabel: _predictionResult!['confidenceLabel'],
+                            description: _predictionResult!['description'],
+                            keySigns: _predictionResult!['keySigns'],
+                            nextSteps: _predictionResult!['nextSteps'],
+                            careTips: _predictionResult!['careTips'],
+                          ),
+                        ),
                       );
                     },
                   ),

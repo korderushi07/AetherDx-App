@@ -1,35 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:maroapp/state/app_state.dart';
-import 'package:maroapp/core/theme/colors.dart';
-import 'package:maroapp/core/theme/typography.dart';
-import 'package:maroapp/core/theme/spacing.dart';
-import 'package:maroapp/core/theme/radius.dart';
-import 'package:maroapp/core/widgets/app_button.dart';
-import 'package:maroapp/core/widgets/app_card.dart';
-import 'package:maroapp/core/widgets/section_title.dart';
-import 'package:maroapp/core/theme/motion.dart';
-import 'package:maroapp/core/widgets/animations.dart';
-import 'result_screen.dart';
+import 'package:aetherdx/state/app_state.dart';
+import 'package:aetherdx/core/theme/colors.dart';
+import 'package:aetherdx/core/theme/typography.dart';
+import 'package:aetherdx/core/theme/spacing.dart';
+import 'package:aetherdx/core/theme/radius.dart';
+import 'package:aetherdx/core/widgets/app_card.dart';
+import 'package:aetherdx/core/widgets/section_title.dart';
+import 'package:aetherdx/core/theme/motion.dart';
+import 'package:aetherdx/core/widgets/animations.dart';
 import 'educational_screen.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:aetherdx/core/localization/translations.dart';
 
 class DashboardScreen extends StatelessWidget {
   final VoidCallback onUploadNailImagePressed;
+  final VoidCallback onProfilePressed;
 
   const DashboardScreen({
     super.key,
     required this.onUploadNailImagePressed,
+    required this.onProfilePressed,
   });
-
-  String _getGreeting() {
-    final hour = DateTime.now().hour;
-    if (hour < 12) {
-      return 'Good Morning 👋';
-    } else if (hour < 17) {
-      return 'Good Afternoon 👋';
-    } else {
-      return 'Good Evening 👋';
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,83 +40,53 @@ class DashboardScreen extends StatelessWidget {
                   // 1. Smart AI Assistant Greeting
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      FadeSlideWidget(
-                        delay: const Duration(milliseconds: 60),
-                        slideDistance: -AetherMotion.slideDistanceSmall,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              _getGreeting(),
-                              style: AppTypography.caption,
-                            ),
-                            const SizedBox(height: AppSpacing.gapSmall),
-                            Text(
-                              appState.name,
-                              style: AppTypography.screenTitle,
-                            ),
-                            const SizedBox(height: AppSpacing.gapSmall),
-                            const Row(
-                              children: [
-                                Icon(Icons.auto_awesome_rounded, color: AppColors.primary, size: 14),
-                                SizedBox(width: 4),
-                                Text(
-                                  'AI Nail Health Assistant',
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.primary,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 2),
-                            const Text(
-                              'Ready to analyze your nail health.',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: AppColors.textSecondary,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      // Circular Notification Icon (fades in, 0ms delay, no slide)
+                      // Avatar on left
                       FadeSlideWidget(
                         delay: Duration.zero,
                         slideDistance: 0,
-                        child: Stack(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: AppColors.cardBg,
-                                shape: BoxShape.circle,
-                                border: Border.all(color: const Color(0xFFE2E8F0)),
-                              ),
-                              child: const Icon(
-                                Icons.notifications_none_rounded,
-                                color: AppColors.textPrimary,
-                                size: 22,
-                              ),
+                        child: GestureDetector(
+                          onTap: onProfilePressed,
+                          behavior: HitTestBehavior.opaque,
+                          child: Container(
+                            padding: const EdgeInsets.all(3),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(color: const Color(0xFFE2E8F0), width: 1.5),
                             ),
-                            Positioned(
-                              right: 3,
-                              top: 3,
-                              child: Container(
-                                width: 8,
-                                height: 8,
-                                decoration: const BoxDecoration(
-                                  color: AppColors.error,
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                            ),
-                          ],
+                            child: appState.buildAvatarWidget(22),
+                          ),
                         ),
                       ),
                     ],
+                  ),
+                  const SizedBox(height: 18),
+                  
+                  // Text greeting below avatar
+                  FadeSlideWidget(
+                    delay: const Duration(milliseconds: 60),
+                    slideDistance: -AetherMotion.slideDistanceSmall,
+                    child: RichText(
+                      text: TextSpan(
+                        style: GoogleFonts.outfit(
+                          fontSize: 26,
+                          color: const Color(0xFF94A3B8),
+                          fontWeight: FontWeight.w300,
+                          letterSpacing: -0.5,
+                        ),
+                        children: [
+                          TextSpan(text: 'Hello, '.tr()),
+                          TextSpan(
+                            text: '${appState.name.trim().split(RegExp(r'\s+')).first} !',
+                            style: GoogleFonts.outfit(
+                              fontWeight: FontWeight.w700,
+                              color: const Color(0xFF1F2937),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.sectionSpace),
 
@@ -134,17 +95,24 @@ class DashboardScreen extends StatelessWidget {
                     delay: const Duration(milliseconds: 120),
                     slideDistance: AetherMotion.slideDistanceSmall,
                     child: GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => const EducationalScreen()),
-                        );
-                      },
+                      onTap: onUploadNailImagePressed,
                       child: Container(
                         width: double.infinity,
                         decoration: BoxDecoration(
-                          color: AppColors.secondaryBg,
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFF0F3E42), Color(0xFF1B6E74)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
                           borderRadius: AppRadius.cardBorderRadius,
-                          border: Border.all(color: const Color(0xFFBBEBF2), width: 1.5),
+                          border: Border.all(color: const Color(0xFF238E95), width: 1),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF155E63).withValues(alpha: 0.15),
+                              blurRadius: 20,
+                              offset: const Offset(0, 10),
+                            ),
+                          ],
                         ),
                         padding: const EdgeInsets.all(AppSpacing.cardInternalPadding),
                         child: Row(
@@ -160,67 +128,84 @@ class DashboardScreen extends StatelessWidget {
                                       Container(
                                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                         decoration: BoxDecoration(
-                                          color: AppColors.primary.withValues(alpha: 0.1),
+                                          color: Colors.white.withValues(alpha: 0.15),
                                           borderRadius: BorderRadius.circular(8),
                                         ),
-                                        child: const Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Icon(Icons.verified, color: AppColors.primary, size: 10),
-                                            SizedBox(width: 4),
-                                            Text(
-                                              'AI Powered',
-                                              style: TextStyle(
-                                                fontSize: 9,
-                                                fontWeight: FontWeight.w800,
-                                                color: AppColors.primary,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white.withValues(alpha: 0.6),
-                                          borderRadius: BorderRadius.circular(8),
-                                        ),
-                                        child: const Text(
-                                          'Est. Time: 5s',
-                                          style: TextStyle(
+                                        child: Text(
+                                          'Est. Time: 5s'.tr(),
+                                          style: const TextStyle(
                                             fontSize: 9,
-                                            fontWeight: FontWeight.w700,
-                                            color: AppColors.primary,
+                                            fontWeight: FontWeight.w800,
+                                            color: Colors.white,
                                           ),
                                         ),
                                       ),
                                     ],
                                   ),
                                   const SizedBox(height: 12),
-                                  const Text(
-                                    'AI Nail Scan',
-                                    style: TextStyle(
+                                  Text(
+                                    'AI Nail Scan'.tr(),
+                                    style: const TextStyle(
                                       fontSize: 22,
-                                      fontWeight: FontWeight.w800,
-                                      color: AppColors.primary,
+                                      fontWeight: FontWeight.w900,
+                                      color: Colors.white,
                                       letterSpacing: -0.5,
                                     ),
                                   ),
                                   const SizedBox(height: 6),
-                                  const Text(
-                                    'Upload a nail image for instant AI disease detection.',
-                                    style: TextStyle(
+                                  Text(
+                                    'Upload a nail image for instant disease detection.'.tr(),
+                                    style: const TextStyle(
                                       fontSize: 13,
-                                      color: AppColors.primary,
-                                      height: 1.3,
+                                      color: Color(0xFFE2F3F5),
+                                      height: 1.35,
+                                      fontWeight: FontWeight.w600,
                                     ),
                                   ),
-                                  const SizedBox(height: 16),
-                                  AppButton(
-                                    text: 'Start AI Scan',
-                                    icon: Icons.camera_alt_outlined,
-                                    onPressed: onUploadNailImagePressed,
+                                  const SizedBox(height: 18),
+                                  Container(
+                                    width: 145,
+                                    height: 38,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(19),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withValues(alpha: 0.08),
+                                          blurRadius: 10,
+                                          offset: const Offset(0, 4),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Material(
+                                      color: Colors.transparent,
+                                      child: InkWell(
+                                        onTap: onUploadNailImagePressed,
+                                        borderRadius: BorderRadius.circular(19),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Start Scan'.tr(),
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w800,
+                                                  color: AppColors.primary,
+                                                ),
+                                              ),
+                                              const SizedBox(width: 8),
+                                              const Icon(
+                                                Icons.arrow_forward_rounded,
+                                                size: 18,
+                                                color: AppColors.primary,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ],
                               ),
@@ -271,62 +256,138 @@ class DashboardScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: AppSpacing.sectionSpace),
 
-                  // Health Overview Heading
-                  FadeSlideWidget(
-                    delay: const Duration(milliseconds: 180),
-                    child: const SectionTitle(title: 'Health Overview'),
-                  ),
-                  const SizedBox(height: AppSpacing.gapMedium),
-
-                  // Health Overview Stats Row 1
+                  // Clinical Trust Banner
                   FadeSlideWidget(
                     delay: const Duration(milliseconds: 230),
-                    child: Row(
-                      children: [
-                        _buildStatCard('Current Risk', 'Low', AppColors.success, bg: const Color(0xFFDCFCE7)),
-                        const SizedBox(width: AppSpacing.cardSpace),
-                        _buildStatCard('Last Scan', 'Yesterday', AppColors.textPrimary),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.cardSpace),
-
-                  // Health Overview Stats Row 2
-                  FadeSlideWidget(
-                    delay: const Duration(milliseconds: 280),
-                    child: Row(
-                      children: [
-                        _buildStatCard('Total Scans', '12', AppColors.textPrimary),
-                        const SizedBox(width: AppSpacing.cardSpace),
-                        _buildStatCard('AI Accuracy', '99%', AppColors.primary, bg: AppColors.secondaryBg),
-                      ],
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [
+                            Color(0xFFF2FAF9), // Ultra-light soft teal matching secondaryBg
+                            Color(0xFFFFFFFF), // Pure white
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        image: const DecorationImage(
+                          image: AssetImage('assets/images/result_header_pattern.png'),
+                          fit: BoxFit.cover,
+                          opacity: 0.05, // Subtle pattern transparency
+                        ),
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(36),
+                          topRight: Radius.circular(8),
+                          bottomLeft: Radius.circular(8),
+                          bottomRight: Radius.circular(36),
+                        ),
+                        border: Border.all(
+                          color: AppColors.primary.withValues(alpha: 0.18), 
+                          width: 1.5,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.primary.withValues(alpha: 0.05),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: 54,
+                                height: 54,
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary.withValues(alpha: 0.1),
+                                  borderRadius: const BorderRadius.only(
+                                    topLeft: Radius.circular(20),
+                                    topRight: Radius.circular(6),
+                                    bottomLeft: Radius.circular(6),
+                                    bottomRight: Radius.circular(20),
+                                  ),
+                                  border: Border.all(
+                                    color: AppColors.primary.withValues(alpha: 0.22),
+                                    width: 1.5,
+                                  ),
+                                ),
+                                child: const Icon(
+                                  Icons.health_and_safety_rounded, // Medical cross shield icon
+                                  color: AppColors.primary,
+                                  size: 28,
+                                ),
+                              ),
+                              const SizedBox(width: 14),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Trusted by Doctors'.tr(),
+                                      style: GoogleFonts.outfit(
+                                        fontSize: 19,
+                                        fontWeight: FontWeight.w800,
+                                        color: const Color(0xFF0F3E42), // Deep rich teal
+                                        letterSpacing: -0.5,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      'Tested on 1200+ Patients'.tr(),
+                                      style: GoogleFonts.outfit(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w700,
+                                        color: AppColors.primary,
+                                        letterSpacing: 0.2,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      'Approved by Lata Mangeshkar Hospital, Nagpur'.tr(),
+                                      style: GoogleFonts.outfit(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColors.textSecondary,
+                                        letterSpacing: 0.1,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 22),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(child: _buildTrustBadge('94.4%', 'Accuracy', align: CrossAxisAlignment.start)),
+                              Container(
+                                height: 24,
+                                width: 1.5,
+                                color: AppColors.primary.withValues(alpha: 0.12),
+                              ),
+                              Expanded(child: _buildTrustBadge('1,200+', 'Clinical Cases', align: CrossAxisAlignment.center)),
+                              Container(
+                                height: 24,
+                                width: 1.5,
+                                color: AppColors.primary.withValues(alpha: 0.12),
+                              ),
+                              Expanded(child: _buildTrustBadge('HIPAA', 'Secure Storage', align: CrossAxisAlignment.end)),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   const SizedBox(height: AppSpacing.sectionSpace),
 
-                  // Latest Analysis section
-                  FadeSlideWidget(
-                    delay: const Duration(milliseconds: 330),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SectionTitle(title: 'Latest Analysis'),
-                        const SizedBox(height: AppSpacing.gapMedium),
-                        if (!appState.hasScans)
-                          _buildEmptyStateCard(context)
-                        else
-                          _buildLatestAnalysisCard(context),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.sectionSpace),
 
-                  // AI Status Card
-                  FadeSlideWidget(
-                    delay: const Duration(milliseconds: 380),
-                    child: _buildAIStatusCard(context, appState),
-                  ),
-                  const SizedBox(height: AppSpacing.sectionSpace),
+
+
 
                   // Daily Health Tip Card
                   FadeSlideWidget(
@@ -339,7 +400,7 @@ class DashboardScreen extends StatelessWidget {
                   if (appState.hasScans) ...[
                     FadeSlideWidget(
                       delay: const Duration(milliseconds: 480),
-                      child: const SectionTitle(title: 'Recent Activity'),
+                      child: SectionTitle(title: 'Recent Activity'.tr()),
                     ),
                     const SizedBox(height: AppSpacing.gapMedium),
                     FadeSlideWidget(
@@ -359,278 +420,83 @@ class DashboardScreen extends StatelessWidget {
 
   // --- Widget helper builders ---
 
-  Widget _buildStatCard(String label, String value, Color textColor, {Color bg = Colors.white}) {
-    return Expanded(
-      child: AppCard(
-        backgroundColor: bg,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              label,
-              style: AppTypography.caption,
-            ),
-            const SizedBox(height: AppSpacing.gapSmall),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w800,
-                color: textColor,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
-  Widget _buildLatestAnalysisCard(BuildContext context) {
-    return AppCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              // Image Thumbnail with rounded corners
-              ClipRRect(
-                borderRadius: AppRadius.imageBorderRadius,
-                child: Image.asset(
-                  'assets/images/nail_analysis_result.png',
-                  width: 64,
-                  height: 64,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              const SizedBox(width: 16),
-              // Disease Name & Date details
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Fungal Infection',
-                          style: AppTypography.cardTitle,
-                        ),
-                        // Status badge (Mild)
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: const BoxDecoration(
-                            color: Color(0xFFFEF3C7),
-                            borderRadius: BorderRadius.all(Radius.circular(8)),
-                          ),
-                          child: const Text(
-                            'Mild',
-                            style: TextStyle(
-                              fontSize: 10,
-                              fontWeight: FontWeight.w800,
-                              color: AppColors.warning,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    const Text(
-                      'Yesterday',
-                      style: AppTypography.caption,
-                    ),
-                    const SizedBox(height: 6),
-                    const Row(
-                      children: [
-                        Text(
-                          'CONFIDENCE',
-                          style: TextStyle(
-                            fontSize: 9,
-                            fontWeight: FontWeight.w800,
-                            color: AppColors.textSecondary,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                        SizedBox(width: 8),
-                        Text(
-                          '92%',
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w800,
-                            color: AppColors.primary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 18),
-          // Animated horizontal progress indicator
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: const AnimatedProgressBar(
-              value: 0.92,
-              minHeight: 8,
-              backgroundColor: Color(0xFFF1F5F9),
-              valueColor: AppColors.primary,
-            ),
-          ),
-          const SizedBox(height: 20),
-          // View Full Report button spanning full width
-          AppButton(
-            text: 'View Full Report',
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const ResultScreen(
-                    conditionName: 'Fungal Infection',
-                    matchPercentage: 92,
-                    confidenceLabel: 'Mild',
-                    description: 'A common fungal infection of the nail, causing discoloration, scaling, and thickening. It is often caused by dermatophytes.',
-                    keySigns: 'Discoloration, scaling under the nail, thickening, and crumbly edges',
-                    nextSteps: 'Consult a dermatologist to confirm diagnosis and obtain prescription antifungal medication',
-                    careTips: 'Keep nails dry and clean, wear breathable socks, and avoid sharing nail clippers',
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
 
-  Widget _buildAIStatusCard(BuildContext context, AppState appState) {
-    return AppCard(
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: const BoxDecoration(
-              color: AppColors.secondaryBg,
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.psychology_outlined,
-              color: AppColors.primary,
-              size: 24,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'AI Assistant',
-                  style: AppTypography.cardTitle,
-                ),
-                const SizedBox(height: 2),
-                const Text(
-                  'Ready to Analyze',
-                  style: AppTypography.caption,
-                ),
-                const SizedBox(height: 4),
-                GestureDetector(
-                  onTap: () {
-                    appState.hasScans = !appState.hasScans;
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(appState.hasScans ? 'Switched to Analyzed State' : 'Switched to Onboarding Empty State'),
-                        duration: const Duration(seconds: 1),
-                      ),
-                    );
-                  },
-                  child: const Text(
-                    'Model: AtherDx AI v2  [tap to toggle]',
-                    style: TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.primary,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Live status pulse marker
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 8,
-                height: 8,
-                decoration: const BoxDecoration(
-                  color: AppColors.success,
-                  shape: BoxShape.circle,
-                ),
-              ),
-              const SizedBox(width: 6),
-              const Text(
-                'Online',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textSecondary,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+
+
 
   Widget _buildDailyTipCard(BuildContext context) {
-    return AppCard(
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF0FDF4),
+        borderRadius: AppRadius.cardBorderRadius,
+        border: Border.all(color: const Color(0xFFDCFCE7), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
-              Text(
-                '💡',
-                style: TextStyle(fontSize: 18),
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                ),
+                child: const Text(
+                  '💡',
+                  style: TextStyle(fontSize: 14),
+                ),
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 10),
               Text(
-                'Daily Nail Health Tip',
-                style: AppTypography.cardTitle,
+                'Daily Nail Health Tip'.tr(),
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.textPrimary,
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          const Text(
-            'Keep nails dry after washing to reduce fungal growth.',
-            style: TextStyle(
+          const SizedBox(height: 14),
+          Text(
+            'Keep nails dry after washing to reduce fungal growth.'.tr(),
+            style: const TextStyle(
               fontSize: 13.5,
               color: AppColors.textSecondary,
-              height: 1.4,
+              height: 1.45,
+              fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 16),
           GestureDetector(
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const EducationalScreen()),
               );
             },
-            child: const Row(
+            child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Read More',
-                  style: TextStyle(
+                  'Read More'.tr(),
+                  style: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w800,
                     color: AppColors.primary,
                   ),
                 ),
-                SizedBox(width: 4),
-                Icon(Icons.arrow_forward_rounded, size: 14, color: AppColors.primary),
+                const SizedBox(width: 4),
+                const Icon(Icons.arrow_forward_rounded, size: 14, color: AppColors.primary),
               ],
             ),
           ),
@@ -659,7 +525,7 @@ class DashboardScreen extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
-            color: AppColors.success.withOpacity(0.1),
+            color: AppColors.success.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: const Icon(
@@ -674,7 +540,7 @@ class DashboardScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                title,
+                title.tr(),
                 style: const TextStyle(
                   fontSize: 13.5,
                   fontWeight: FontWeight.w700,
@@ -683,7 +549,7 @@ class DashboardScreen extends StatelessWidget {
               ),
               const SizedBox(height: 2),
               Text(
-                subtitle,
+                subtitle.tr(),
                 style: AppTypography.caption,
               ),
             ],
@@ -693,47 +559,32 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyStateCard(BuildContext context) {
-    return AppCard(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const SizedBox(height: 10),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: const BoxDecoration(
-              color: Color(0xFFF1F5F9),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.camera_enhance_outlined,
-              color: AppColors.primary,
-              size: 32,
-            ),
+  Widget _buildTrustBadge(String value, String label, {CrossAxisAlignment align = CrossAxisAlignment.start}) {
+    return Column(
+      crossAxisAlignment: align,
+      children: [
+        Text(
+          value.tr(),
+          style: GoogleFonts.outfit(
+            fontSize: 17,
+            fontWeight: FontWeight.w600, // Reduced from w900 (bold) to w600 (semi-bold)
+            color: const Color(0xFF0F3E42), // Dark deep teal
+            letterSpacing: -0.3,
           ),
-          const SizedBox(height: 18),
-          const Text(
-            'No Scan Yet',
-            style: AppTypography.cardTitle,
+        ),
+        const SizedBox(height: 3),
+        Text(
+          label.tr(),
+          style: GoogleFonts.outfit(
+            fontSize: 11.5,
+            fontWeight: FontWeight.w400, // Reduced from w600 (semi-bold) to w400 (regular)
+            color: AppColors.textSecondary,
+            letterSpacing: 0.1,
           ),
-          const SizedBox(height: 8),
-          const Text(
-            'Upload your first nail image to receive an AI-powered diagnosis.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 13,
-              color: AppColors.textSecondary,
-              height: 1.4,
-            ),
-          ),
-          const SizedBox(height: 20),
-          AppButton(
-            text: 'Start First Scan',
-            onPressed: onUploadNailImagePressed,
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
+
+
 }

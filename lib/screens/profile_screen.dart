@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:maroapp/core/theme/colors.dart';
-import 'package:maroapp/core/theme/typography.dart';
-import 'package:maroapp/core/theme/radius.dart';
-import 'package:maroapp/core/widgets/app_bar.dart';
-import 'package:maroapp/core/widgets/app_button.dart';
-import 'package:maroapp/core/widgets/app_card.dart';
-import 'package:maroapp/screens/login_screen.dart';
-import 'package:maroapp/state/app_state.dart';
+import 'package:aetherdx/core/theme/colors.dart';
+import 'package:aetherdx/core/theme/typography.dart';
+import 'package:aetherdx/core/theme/radius.dart';
+import 'package:aetherdx/core/widgets/app_bar.dart';
+import 'package:aetherdx/core/widgets/app_button.dart';
+import 'package:aetherdx/core/widgets/app_card.dart';
+import 'package:aetherdx/screens/login_screen.dart';
+import 'package:aetherdx/state/app_state.dart';
+import 'package:aetherdx/core/network/api_service.dart';
+import 'package:aetherdx/core/localization/translations.dart';
 
 class ProfileScreen extends StatelessWidget {
   final VoidCallback onBackPressed;
@@ -20,17 +22,17 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppState appState = AppState();
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: CustomAppBar(
-        title: 'Profile',
-        onBackPressed: onBackPressed,
-      ),
-      body: SafeArea(
-        child: ListenableBuilder(
-          listenable: appState,
-          builder: (context, _) {
-            return SingleChildScrollView(
+    return ListenableBuilder(
+      listenable: appState,
+      builder: (context, _) {
+        return Scaffold(
+          backgroundColor: AppColors.background,
+          appBar: CustomAppBar(
+            title: 'Profile'.tr(),
+            onBackPressed: onBackPressed,
+          ),
+          body: SafeArea(
+            child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -72,10 +74,15 @@ class ProfileScreen extends StatelessWidget {
 
                   // 4. Edit Profile Button
                   AppButton(
-                    text: 'Edit Profile',
+                    text: 'Edit Profile'.tr(),
                     onPressed: () => _showEditProfileSheet(context, appState),
                   ),
-                  const SizedBox(height: 32),
+                  const SizedBox(height: 24),
+
+                  // Health Summary Profile Card
+                  _buildHealthProfileCard(context, appState),
+
+                  const SizedBox(height: 24),
 
                   // 5. Settings List Card Container
                   AppCard(
@@ -85,7 +92,7 @@ class ProfileScreen extends StatelessWidget {
                         _buildMenuItem(
                           context,
                           icon: Icons.language,
-                          title: 'Language',
+                          title: 'Language'.tr(),
                           trailingText: appState.language,
                           onTap: () => _showLanguageSheet(context, appState),
                         ),
@@ -119,15 +126,24 @@ class ProfileScreen extends StatelessWidget {
                         _buildMenuItem(
                           context,
                           icon: Icons.logout_rounded,
-                          title: 'Log Out',
+                          title: 'Log Out'.tr(),
                           textColor: AppColors.error,
                           iconColor: AppColors.error,
                           showChevron: false,
-                          onTap: () {
-                            Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(builder: (_) => const LoginScreen()),
-                              (route) => false,
-                            );
+                          onTap: () async {
+                            debugPrint("LOGOUT: Initiating logout flow...");
+                            // Clear stored session tokens
+                            await ApiService.logout();
+                            debugPrint("LOGOUT: Session tokens removed from SharedPreferences.");
+                            // Clear in-memory AppState
+                            appState.clear();
+                            debugPrint("LOGOUT: AppState cleared. Navigating to LoginScreen...");
+                            if (context.mounted) {
+                              Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(builder: (_) => const LoginScreen()),
+                                (route) => false,
+                              );
+                            }
                           },
                         ),
                       ],
@@ -136,12 +152,98 @@ class ProfileScreen extends StatelessWidget {
                   const SizedBox(height: 80),
                 ],
               ),
-            );
-          },
-        ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildHealthProfileCard(BuildContext context, AppState appState) {
+    return AppCard(
+      padding: const EdgeInsets.all(20.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.person_rounded,
+                  color: AppColors.primary,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'Profile Details'.tr(),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          
+          // Row of key metrics
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildMetricItem(Icons.wc_rounded, 'Gender'.tr(), appState.gender.isEmpty ? '-' : appState.gender),
+              _buildMetricItem(Icons.cake_rounded, 'DOB'.tr(), appState.dob.isEmpty ? '-' : appState.dob),
+              _buildMetricItem(Icons.phone_rounded, 'Phone'.tr(), appState.phoneNumber.isEmpty ? '-' : appState.phoneNumber),
+            ],
+          ),
+        ],
       ),
     );
   }
+
+  Widget _buildMetricItem(IconData icon, String label, String value) {
+    return Expanded(
+      child: Row(
+        children: [
+          Icon(icon, size: 16, color: const Color(0xFF94A3B8)),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: const TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF94A3B8),
+                  ),
+                ),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+
 
   Widget _buildMenuItem(
     BuildContext context, {
@@ -187,13 +289,78 @@ class ProfileScreen extends StatelessWidget {
   }
 
   // --- Bottom Sheet Implementations ---
-
   void _showEditProfileSheet(BuildContext context, AppState appState) {
     final nameController = TextEditingController(text: appState.name);
     final usernameController = TextEditingController(text: appState.username);
     final emailController = TextEditingController(text: appState.email);
+    final phoneController = TextEditingController(text: appState.phoneNumber);
+    
+    DateTime? dobValue = appState.dob.isNotEmpty ? DateTime.tryParse(appState.dob) : null;
+    final dobController = TextEditingController(text: appState.dob);
+    
+    String? selectedGender = appState.gender.isEmpty ? null : appState.gender;
+    if (selectedGender != null && !['Male', 'Female', 'Other', 'Prefer not to say'].contains(selectedGender)) {
+      selectedGender = null;
+    }
+
     final formKey = GlobalKey<FormState>();
     AvatarType selectedAvatar = appState.avatarType;
+    bool isSaving = false;
+
+    InputDecoration buildInputDecoration(String hintText, {Widget? suffixIcon, String? prefixText, String? suffixText}) {
+      return InputDecoration(
+        hintText: hintText,
+        hintStyle: const TextStyle(color: AppColors.placeholder, fontSize: 14),
+        fillColor: AppColors.background,
+        filled: true,
+        prefixText: prefixText,
+        prefixStyle: const TextStyle(color: AppColors.placeholder, fontWeight: FontWeight.bold),
+        suffixText: suffixText,
+        suffixStyle: const TextStyle(color: AppColors.textSecondary, fontWeight: FontWeight.bold, fontSize: 13),
+        suffixIcon: suffixIcon,
+        border: OutlineInputBorder(
+          borderRadius: AppRadius.inputBorderRadius,
+          borderSide: BorderSide.none,
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      );
+    }
+
+    Widget buildSectionHeader(String title) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 24, bottom: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w800,
+                color: AppColors.primary,
+                letterSpacing: 0.5,
+              ),
+            ),
+            const SizedBox(height: 6),
+            const Divider(height: 1, thickness: 1, color: Color(0xFFE2E8F0)),
+          ],
+        ),
+      );
+    }
+
+    Widget buildFieldLabel(String label) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 14, bottom: 6),
+        child: Text(
+          label,
+          style: const TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+            color: AppColors.textPrimary,
+          ),
+        ),
+      );
+    }
 
     showModalBottomSheet(
       context: context,
@@ -211,7 +378,10 @@ class ProfileScreen extends StatelessWidget {
                   color: Colors.white,
                   borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
                 ),
-                padding: const EdgeInsets.all(28),
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height * 0.85,
+                ),
+                padding: const EdgeInsets.fromLTRB(28, 28, 28, 16),
                 child: Form(
                   key: formKey,
                   child: Column(
@@ -236,215 +406,271 @@ class ProfileScreen extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 16),
 
-                      // Avatar Selection
-                      const Text(
-                        'Choose Avatar',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: AvatarType.values.map((type) {
-                          final isSelected = selectedAvatar == type;
-                          Widget avatarPreview;
+                      // Scrollable content
+                      Flexible(
+                        child: SingleChildScrollView(
+                          physics: const BouncingScrollPhysics(),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Avatar Selection
+                              buildFieldLabel('Choose Avatar'),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: AvatarType.values.map((type) {
+                                  final isSelected = selectedAvatar == type;
+                                  Widget avatarPreview;
 
-                          if (type == AvatarType.asset) {
-                            avatarPreview = const CircleAvatar(
-                              radius: 24,
-                              backgroundImage: AssetImage('assets/images/profile_avatar.png'),
-                            );
-                          } else {
-                            List<Color> colors;
-                            String label;
-                            switch (type) {
-                              case AvatarType.ocean:
-                                colors = const [Color(0xFF06B6D4), Color(0xFF0EA5E9)];
-                                label = 'O';
-                                break;
-                              case AvatarType.sunset:
-                                colors = const [Color(0xFFF97316), Color(0xFFEF4444)];
-                                label = 'S';
-                                break;
-                              case AvatarType.amethyst:
-                                colors = const [Color(0xFFD946EF), Color(0xFF8B5CF6)];
-                                label = 'A';
-                                break;
-                              case AvatarType.emerald:
-                                colors = const [Color(0xFF10B981), Color(0xFF059669)];
-                                label = 'E';
-                                break;
-                              default:
-                                colors = const [Colors.grey, Colors.blueGrey];
-                                label = 'U';
-                            }
-                            avatarPreview = Container(
-                              width: 48,
-                              height: 48,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                gradient: LinearGradient(colors: colors),
+                                  if (type == AvatarType.asset) {
+                                    avatarPreview = const CircleAvatar(
+                                      radius: 24,
+                                      backgroundImage: AssetImage('assets/images/profile_avatar.png'),
+                                    );
+                                  } else {
+                                    List<Color> colors;
+                                    String label;
+                                    switch (type) {
+                                      case AvatarType.ocean:
+                                        colors = const [Color(0xFF06B6D4), Color(0xFF0EA5E9)];
+                                        label = 'O';
+                                        break;
+                                      case AvatarType.sunset:
+                                        colors = const [Color(0xFFF97316), Color(0xFFEF4444)];
+                                        label = 'S';
+                                        break;
+                                      case AvatarType.amethyst:
+                                        colors = const [Color(0xFFD946EF), Color(0xFF8B5CF6)];
+                                        label = 'A';
+                                        break;
+                                      case AvatarType.emerald:
+                                        colors = const [Color(0xFF10B981), Color(0xFF059669)];
+                                        label = 'E';
+                                        break;
+                                      default:
+                                        colors = const [Colors.grey, Colors.blueGrey];
+                                        label = 'U';
+                                    }
+                                    avatarPreview = Container(
+                                      width: 48,
+                                      height: 48,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        gradient: LinearGradient(colors: colors),
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        label,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                    );
+                                  }
+
+                                  return GestureDetector(
+                                    onTap: () {
+                                      setSheetState(() {
+                                        selectedAvatar = type;
+                                      });
+                                    },
+                                    child: AnimatedContainer(
+                                      duration: const Duration(milliseconds: 150),
+                                      padding: const EdgeInsets.all(3),
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: isSelected ? AppColors.primary : Colors.transparent,
+                                          width: 2.5,
+                                        ),
+                                      ),
+                                      child: avatarPreview,
+                                    ),
+                                  );
+                                }).toList(),
                               ),
-                              alignment: Alignment.center,
-                              child: Text(
-                                label,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
+
+                              // Section: Account Details
+                              buildSectionHeader('Account Details'),
+                              
+                              buildFieldLabel('Full Name'),
+                              TextFormField(
+                                controller: nameController,
+                                decoration: buildInputDecoration('Enter your name'),
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return 'Name cannot be empty';
+                                  }
+                                  return null;
+                                },
+                              ),
+
+                              buildFieldLabel('Username'),
+                              TextFormField(
+                                controller: usernameController,
+                                decoration: buildInputDecoration('Enter username', prefixText: '@'),
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return 'Username cannot be empty';
+                                  }
+                                  if (value.contains(' ')) {
+                                    return 'Username cannot contain spaces';
+                                  }
+                                  return null;
+                                },
+                              ),
+
+                              buildFieldLabel('Email'),
+                              TextFormField(
+                                controller: emailController,
+                                keyboardType: TextInputType.emailAddress,
+                                decoration: buildInputDecoration('Enter email address'),
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return 'Email cannot be empty';
+                                  }
+                                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                                    return 'Enter a valid email address';
+                                  }
+                                  return null;
+                                },
+                              ),
+
+                              buildFieldLabel('Mobile Number'),
+                              TextFormField(
+                                controller: phoneController,
+                                keyboardType: TextInputType.phone,
+                                decoration: buildInputDecoration('Enter mobile number'),
+                              ),
+
+                              // Section: Personal Info
+                              buildSectionHeader('Personal Info'),
+
+                              buildFieldLabel('Date of Birth'),
+                              TextFormField(
+                                controller: dobController,
+                                readOnly: true,
+                                decoration: buildInputDecoration(
+                                  'Select Date of Birth',
+                                  suffixIcon: const Icon(Icons.calendar_today_rounded, color: Color(0xFF94A3B8), size: 20),
                                 ),
+                                onTap: () async {
+                                  final DateTime? picked = await showDatePicker(
+                                    context: context,
+                                    initialDate: dobValue ?? DateTime(2000, 1, 1),
+                                    firstDate: DateTime(1900),
+                                    lastDate: DateTime.now(),
+                                  );
+                                  if (picked != null) {
+                                    setSheetState(() {
+                                      dobValue = picked;
+                                      dobController.text = "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
+                                    });
+                                  }
+                                },
                               ),
-                            );
-                          }
 
-                          return GestureDetector(
-                            onTap: () {
-                              setSheetState(() {
-                                selectedAvatar = type;
-                              });
-                            },
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 150),
-                              padding: const EdgeInsets.all(3),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: isSelected ? AppColors.primary : Colors.transparent,
-                                  width: 2.5,
-                                ),
+                              buildFieldLabel('Gender'),
+                              DropdownButtonFormField<String>(
+                                initialValue: selectedGender,
+                                decoration: buildInputDecoration('Select Gender'),
+                                dropdownColor: Colors.white,
+                                items: ['Male', 'Female', 'Other', 'Prefer not to say'].map((String val) {
+                                  return DropdownMenuItem<String>(
+                                    value: val,
+                                    child: Text(val, style: const TextStyle(fontSize: 14, color: AppColors.textPrimary)),
+                                  );
+                                }).toList(),
+                                onChanged: (val) {
+                                  setSheetState(() {
+                                    selectedGender = val;
+                                  });
+                                },
                               ),
-                              child: avatarPreview,
-                            ),
-                          );
-                        }).toList(),
-                      ),
-                      const SizedBox(height: 24),
-
-                      // Name Field
-                      const Text(
-                        'Full Name',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      TextFormField(
-                        controller: nameController,
-                        decoration: InputDecoration(
-                          hintText: 'Enter your name',
-                          fillColor: AppColors.background,
-                          filled: true,
-                          border: OutlineInputBorder(
-                            borderRadius: AppRadius.inputBorderRadius,
-                            borderSide: BorderSide.none,
+                              
+                              const SizedBox(height: 20),
+                            ],
                           ),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'Name cannot be empty';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 18),
-
-                      // Username Field
-                      const Text(
-                        'Username',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary,
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      TextFormField(
-                        controller: usernameController,
-                        decoration: InputDecoration(
-                          hintText: 'Enter username',
-                          fillColor: AppColors.background,
-                          filled: true,
-                          prefixText: '@',
-                          prefixStyle: const TextStyle(color: AppColors.placeholder, fontWeight: FontWeight.bold),
-                          border: OutlineInputBorder(
-                            borderRadius: AppRadius.inputBorderRadius,
-                            borderSide: BorderSide.none,
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'Username cannot be empty';
-                          }
-                          if (value.contains(' ')) {
-                            return 'Username cannot contain spaces';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 18),
-
-                      // Email Field
-                      const Text(
-                        'Email',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      TextFormField(
-                        controller: emailController,
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(
-                          hintText: 'Enter email address',
-                          fillColor: AppColors.background,
-                          filled: true,
-                          border: OutlineInputBorder(
-                            borderRadius: AppRadius.inputBorderRadius,
-                            borderSide: BorderSide.none,
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return 'Email cannot be empty';
-                          }
-                          if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                            return 'Enter a valid email address';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 28),
+                      
+                      const SizedBox(height: 16),
 
                       // Save Button
                       AppButton(
-                        text: 'Save Changes',
+                        text: isSaving ? 'Saving Changes...' : 'Save Changes',
                         onPressed: () {
+                          if (isSaving) return;
                           if (formKey.currentState!.validate()) {
-                            appState.name = nameController.text.trim();
-                            appState.username = usernameController.text.trim();
-                            appState.email = emailController.text.trim();
-                            appState.avatarType = selectedAvatar;
+                            () async {
+                              setSheetState(() => isSaving = true);
+                              try {
+                                final profilePayload = {
+                                  'full_name': nameController.text.trim(),
+                                  'mobile_number': phoneController.text.trim().isEmpty ? 'Not Specified' : phoneController.text.trim(),
+                                  'dob': dobController.text.trim().isEmpty ? '2000-01-01' : dobController.text.trim(),
+                                  'gender': selectedGender ?? 'Not Specified',
+                                  'blood_group': 'Not Specified',
+                                  'height': 'Not Specified',
+                                  'weight': 'Not Specified',
+                                  'medical_conditions': null,
+                                  'medications': null,
+                                  'allergies': null,
+                                  'emergency_contact_name': 'Not Specified',
+                                  'emergency_contact_relationship': 'Not Specified',
+                                  'emergency_contact_number': 'Not Specified',
+                                  'consent_terms': true,
+                                  'consent_storage': true,
+                                  'consent_medical': true,
+                                };
 
-                            Navigator.pop(context);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Profile updated successfully!'),
-                                backgroundColor: AppColors.success,
-                                duration: Duration(seconds: 2),
-                              ),
-                            );
+                                final success = await ApiService.saveUserProfile(profilePayload);
+                                if (!success) throw Exception('Failed to save profile changes.');
+
+                                // Sync locally (notifies listeners automatically!)
+                                appState.name = nameController.text.trim();
+                                appState.username = usernameController.text.trim();
+                                appState.email = emailController.text.trim();
+                                appState.phoneNumber = phoneController.text.trim();
+                                appState.dob = dobController.text.trim();
+                                appState.gender = selectedGender ?? '';
+                                appState.bloodGroup = 'Not Specified';
+                                appState.height = 'Not Specified';
+                                appState.weight = 'Not Specified';
+                                appState.medicalConditions = '';
+                                appState.medications = '';
+                                appState.allergies = '';
+                                appState.emergencyContactName = 'Not Specified';
+                                appState.emergencyContactRelationship = 'Not Specified';
+                                appState.emergencyContactNumber = 'Not Specified';
+                                appState.avatarType = selectedAvatar;
+
+                                if (context.mounted) {
+                                  Navigator.pop(context);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Profile updated successfully!'),
+                                      backgroundColor: AppColors.success,
+                                      duration: Duration(seconds: 2),
+                                    ),
+                                  );
+                                }
+                              } catch (e) {
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(e.toString().replaceAll('Exception: ', '')),
+                                      backgroundColor: AppColors.error,
+                                    ),
+                                  );
+                                }
+                              } finally {
+                                setSheetState(() => isSaving = false);
+                              }
+                            }();
                           }
                         },
                       ),
@@ -460,10 +686,22 @@ class ProfileScreen extends StatelessWidget {
   }
 
   void _showLanguageSheet(BuildContext context, AppState appState) {
-    final List<String> languages = ['English', 'Spanish', 'French', 'German', 'Japanese'];
+    final List<String> languages = [
+      'English',
+      'Hindi (हिन्दी)',
+      'Marathi (मराठी)',
+      'Bengali (বাংলা)',
+      'Telugu (తెలుగు)',
+      'Tamil (தமிழ்)',
+      'Gujarati (ગુજરાતી)',
+      'Kannada (ಕನ್ನಡ)',
+      'Malayalam (മലയാളം)',
+      'Punjabi (ਪੰਜਾਬੀ)',
+    ];
 
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (context) {
         return Container(
@@ -471,7 +709,10 @@ class ProfileScreen extends StatelessWidget {
             color: Colors.white,
             borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.card)),
           ),
-          padding: const EdgeInsets.all(28),
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.55,
+          ),
+          padding: const EdgeInsets.fromLTRB(28, 20, 28, 12),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -479,8 +720,8 @@ class ProfileScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Select Language',
+                  Text(
+                    'Select Language'.tr(),
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w800,
@@ -493,35 +734,42 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
-              ...languages.map((lang) {
-                final isSelected = appState.language == lang;
-                return ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(
-                    lang,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: isSelected ? FontWeight.w800 : FontWeight.w500,
-                      color: isSelected ? AppColors.primary : AppColors.textPrimary,
-                    ),
+              const SizedBox(height: 12),
+              Flexible(
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Column(
+                    children: languages.map((lang) {
+                      final isSelected = appState.language == lang;
+                      return ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(
+                          lang,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: isSelected ? FontWeight.w800 : FontWeight.w500,
+                            color: isSelected ? AppColors.primary : AppColors.textPrimary,
+                          ),
+                        ),
+                        trailing: isSelected
+                            ? const Icon(Icons.check_circle_rounded, color: AppColors.primary, size: 22)
+                            : null,
+                        onTap: () {
+                          appState.language = lang;
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Language changed to '.trWith(lang)),
+                              backgroundColor: AppColors.success,
+                              duration: const Duration(seconds: 1),
+                            ),
+                          );
+                        },
+                      );
+                    }).toList(),
                   ),
-                  trailing: isSelected
-                      ? const Icon(Icons.check_circle_rounded, color: AppColors.primary, size: 22)
-                      : null,
-                  onTap: () {
-                    appState.language = lang;
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Language changed to $lang'),
-                        backgroundColor: AppColors.success,
-                        duration: const Duration(seconds: 1),
-                      ),
-                    );
-                  },
-                );
-              }),
+                ),
+              ),
             ],
           ),
         );

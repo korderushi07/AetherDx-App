@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/theme/colors.dart';
+import '../state/app_state.dart';
+import '../core/localization/translations.dart';
 import 'dashboard_screen.dart';
 import 'scan_nail_screen.dart';
 import 'history_screen.dart';
@@ -25,6 +27,11 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
           onUploadNailImagePressed: () {
             setState(() {
               _currentIndex = 1; // Switch to Scan Nail screen (index 1)
+            });
+          },
+          onProfilePressed: () {
+            setState(() {
+              _currentIndex = 3; // Switch to Profile screen (index 3)
             });
           },
         );
@@ -63,53 +70,72 @@ class _MainNavigationShellState extends State<MainNavigationShell> {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: body,
-      bottomNavigationBar: Container(
-        margin: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-        decoration: BoxDecoration(
-          color: const Color(0xFF22252A),
-          borderRadius: BorderRadius.circular(35),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.15),
-              blurRadius: 15,
-              offset: const Offset(0, 8),
+      bottomNavigationBar: ListenableBuilder(
+        listenable: AppState(),
+        builder: (context, _) {
+          return Container(
+            padding: EdgeInsets.only(
+              top: 6,
+              bottom: MediaQuery.of(context).padding.bottom > 0
+                  ? MediaQuery.of(context).padding.bottom + 6
+                  : 16.0, // Robust spacing fallback to prevent system button overlap
             ),
-          ],
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _buildNavItem(0, _currentIndex == 0 ? Icons.home_rounded : Icons.home_outlined),
-            _buildNavItem(1, _currentIndex == 1 ? Icons.qr_code_scanner_rounded : Icons.qr_code_scanner_outlined),
-            _buildNavItem(2, _currentIndex == 2 ? Icons.assignment_rounded : Icons.assignment_outlined),
-            _buildNavItem(3, _currentIndex == 3 ? Icons.person_rounded : Icons.person_outline),
-          ],
-        ),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              border: Border(
+                top: BorderSide(
+                  color: Color(0xFFE2E8F0), // Light grey line at top
+                  width: 1.0,
+                ),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildNavItem(0, _currentIndex == 0 ? Icons.space_dashboard_rounded : Icons.space_dashboard_outlined, 'Dashboard'.tr()),
+                _buildNavItem(1, _currentIndex == 1 ? Icons.center_focus_strong_rounded : Icons.center_focus_strong_outlined, 'Scan'.tr()),
+                _buildNavItem(2, _currentIndex == 2 ? Icons.analytics_rounded : Icons.analytics_outlined, 'History'.tr()),
+                _buildNavItem(3, _currentIndex == 3 ? Icons.person_rounded : Icons.person_outline, 'Profile'.tr()),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildNavItem(int index, IconData icon) {
+  Widget _buildNavItem(int index, IconData icon, String label) {
     final bool isSelected = _currentIndex == index;
+    final Color activeColor = AppColors.primary;
+    final Color inactiveColor = const Color(0xFF94A3B8);
+
     return GestureDetector(
       onTap: () {
         setState(() {
           _currentIndex = index;
         });
       },
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 250),
-        curve: Curves.easeInOut,
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: isSelected ? AppColors.primary : Colors.transparent,
-          shape: BoxShape.circle,
-        ),
-        child: Icon(
-          icon,
-          color: isSelected ? Colors.white : const Color(0xFF94A3B8),
-          size: 24,
+      behavior: HitTestBehavior.opaque,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              color: isSelected ? activeColor : inactiveColor,
+              size: 24,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                color: isSelected ? activeColor : inactiveColor,
+              ),
+            ),
+          ],
         ),
       ),
     );

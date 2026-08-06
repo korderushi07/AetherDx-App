@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:maroapp/core/theme/colors.dart';
-import 'package:maroapp/core/theme/typography.dart';
-import 'package:maroapp/core/theme/shadows.dart';
-import 'package:maroapp/core/theme/spacing.dart';
-import 'package:maroapp/core/widgets/app_button.dart';
-import 'package:maroapp/core/widgets/app_card.dart';
+import 'package:aetherdx/core/theme/colors.dart';
+import 'package:aetherdx/core/theme/typography.dart';
+import 'package:aetherdx/core/theme/shadows.dart';
+import 'package:aetherdx/core/theme/spacing.dart';
+import 'package:aetherdx/core/widgets/app_button.dart';
+import 'package:aetherdx/core/widgets/app_card.dart';
 
 class ImageQualityAlertScreen extends StatelessWidget {
   const ImageQualityAlertScreen({super.key});

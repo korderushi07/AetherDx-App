@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'colors.dart';
 import 'radius.dart';
 import '../widgets/animations.dart';
@@ -13,7 +14,7 @@ class AppTheme {
         surface: AppColors.cardBg,
       ),
       scaffoldBackgroundColor: AppColors.background,
-      fontFamily: 'Roboto',
+      fontFamily: GoogleFonts.outfit().fontFamily,
       pageTransitionsTheme: const PageTransitionsTheme(
         builders: {
           TargetPlatform.android: PageTransitionBuilder(),

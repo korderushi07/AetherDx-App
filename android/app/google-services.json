@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "493392434693",
+    "project_id": "aetherdx-app",
+    "storage_bucket": "aetherdx-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:493392434693:android:5dbe1d05c3214c06c7ee6c",
+        "android_client_info": {
+          "package_name": "com.example.atherdx"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKbJ9nScAEX2TLtznj_fQjsiBwnAMTS9o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
