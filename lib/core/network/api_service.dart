@@ -341,6 +341,61 @@ class ApiService {
     }
   }
 
+  /// Fetches nearby specialists based on condition and city.
+  /// Call: GET /api/v1/consultation/nearby?condition=...&city=...
+  static Future<Map<String, dynamic>> getNearbySpecialists({
+    required String condition,
+    required String city,
+  }) async {
+    final queryParams = {
+      'condition': condition,
+      'city': city,
+    };
+    final uri = Uri.parse('$baseUrl/api/v1/consultation/nearby').replace(queryParameters: queryParams);
+    try {
+      final token = await getToken();
+      final headers = {
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
+      };
+      if (token != null) {
+        headers['Authorization'] = 'Bearer $token';
+      }
+      final response = await http.get(uri, headers: headers);
+      if (response.statusCode == 200) {
+        return json.decode(response.body) as Map<String, dynamic>;
+      } else {
+        throw Exception(_parseError(response.body, 'Failed to fetch specialists'));
+      }
+    } catch (e) {
+      throw Exception(e.toString().replaceAll('Exception: ', ''));
+    }
+  }
+
+  /// Fetches details for a specific specialist.
+  /// Call: GET /api/v1/consultation/details/{doctorId}
+  static Future<Map<String, dynamic>> getSpecialistDetails(String doctorId) async {
+    final url = Uri.parse('$baseUrl/api/v1/consultation/details/$doctorId');
+    try {
+      final token = await getToken();
+      final headers = {
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
+      };
+      if (token != null) {
+        headers['Authorization'] = 'Bearer $token';
+      }
+      final response = await http.get(url, headers: headers);
+      if (response.statusCode == 200) {
+        return json.decode(response.body) as Map<String, dynamic>;
+      } else {
+        throw Exception(_parseError(response.body, 'Failed to fetch specialist details'));
+      }
+    } catch (e) {
+      throw Exception(e.toString().replaceAll('Exception: ', ''));
+    }
+  }
+
   /// Clear session variables.
   static Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();

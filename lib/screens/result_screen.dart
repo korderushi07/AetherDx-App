@@ -13,7 +13,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
 import 'package:open_file/open_file.dart';
-import 'specialists_screen.dart';
+import 'finding_specialists_screen.dart';
 import 'educational_screen.dart';
 import 'nutrition_lifestyle_screen.dart';
 
@@ -367,11 +367,15 @@ class ResultScreen extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.fromLTRB(24.0, 8.0, 24.0, 24.0),
                           child: AppButton(
-                            text: 'Book a doctor'.tr(),
+                            text: 'Consult a Specialist'.tr(),
                             icon: Icons.calendar_today_outlined,
                             onPressed: () {
                               Navigator.of(context).push(
-                                MaterialPageRoute(builder: (_) => const SpecialistsScreen()),
+                                MaterialPageRoute(
+                                  builder: (_) => FindingSpecialistsScreen(
+                                    conditionName: conditionName,
+                                  ),
+                                ),
                               );
                             },
                           ),
