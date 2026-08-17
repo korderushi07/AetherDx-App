@@ -31,6 +31,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   }
 
   Future<void> _fetchHistory() async {
+    if (!mounted) return;
     setState(() {
       _isLoading = true;
       _errorMessage = null;
@@ -60,15 +61,19 @@ class _HistoryScreenState extends State<HistoryScreen> {
         };
       }).toList();
 
-      setState(() {
-        _historyData = formatted;
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _historyData = formatted;
+          _isLoading = false;
+        });
+      }
     } catch (e) {
-      setState(() {
-        _errorMessage = e.toString();
-        _isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _errorMessage = e.toString();
+          _isLoading = false;
+        });
+      }
     }
   }
 

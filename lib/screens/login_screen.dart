@@ -8,6 +8,8 @@ import 'package:aetherdx/core/theme/shadows.dart';
 import 'package:aetherdx/core/widgets/app_button.dart';
 import 'package:aetherdx/core/network/api_service.dart';
 import 'package:aetherdx/state/app_state.dart';
+import 'package:aetherdx/services/google_auth_service.dart';
+import 'health_profile_onboarding_screen.dart';
 import 'main_navigation_shell.dart';
 import 'signup_screen.dart';
 
@@ -80,6 +82,77 @@ class _LoginScreenState extends State<LoginScreen> {
         if (token != null) {
           _completeAuthFlow(email);
         }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString().replaceAll('Exception: ', '')),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _handleGoogleSignIn() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final result = await GoogleAuthService.signInWithGoogle();
+
+      if (result == null) {
+        // User cancelled sign in
+        return;
+      }
+
+      final email = result['user_email'] as String? ?? '';
+      final name = result['user_name'] as String?;
+
+      // Populate AppState
+      final appState = AppState();
+      if (email.isNotEmpty) {
+        appState.email = email;
+        final emailPrefix = email.split('@')[0];
+        appState.username = emailPrefix;
+        appState.name = name ?? (emailPrefix[0].toUpperCase() + emailPrefix.substring(1));
+      }
+
+      // Call GET /auth/profile to check user profile status
+      final profileStatus = await ApiService.getProfileWithStatus();
+      final statusCode = profileStatus['statusCode'] as int;
+
+      if (!mounted) return;
+
+      if (statusCode == 200) {
+        final profileData = profileStatus['data'] as Map<String, dynamic>?;
+        if (profileData != null) {
+          appState.updateFromMap(profileData);
+        }
+        // Navigate directly to Main Dashboard
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (_) => const MainNavigationShell()),
+        );
+      } else if (statusCode == 404) {
+        // Navigate to Health Profile Onboarding screen
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (_) => HealthProfileOnboardingScreen(
+              initialEmail: email,
+              initialName: name,
+            ),
+          ),
+        );
+      } else {
+        throw Exception('Unexpected profile response code: $statusCode');
       }
     } catch (e) {
       if (mounted) {
@@ -334,13 +407,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 iconWidget: _buildGoogleLogo(),
                 label: 'Continue with Google'.tr(),
                 onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Google Sign In is unavailable now'.tr()),
-                      backgroundColor: AppColors.primary,
-                      duration: const Duration(seconds: 1),
-                    ),
-                  );
+                  if (!_isLoading) {
+                    _handleGoogleSignIn();
+                  }
                 },
               ),
               const SizedBox(height: 14),

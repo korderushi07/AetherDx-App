@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:aetherdx/core/theme/colors.dart';
 import 'package:aetherdx/core/theme/typography.dart';
 import 'package:aetherdx/core/theme/radius.dart';
@@ -543,7 +544,20 @@ class ProfileScreen extends StatelessWidget {
                               TextFormField(
                                 controller: phoneController,
                                 keyboardType: TextInputType.phone,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  LengthLimitingTextInputFormatter(10),
+                                ],
                                 decoration: buildInputDecoration('Enter mobile number'),
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return 'Mobile number cannot be empty';
+                                  }
+                                  if (value.trim().length != 10) {
+                                    return 'Enter exactly 10 digits';
+                                  }
+                                  return null;
+                                },
                               ),
 
                               // Section: Personal Info
@@ -785,7 +799,10 @@ class ProfileScreen extends StatelessWidget {
         return ListenableBuilder(
           listenable: appState,
           builder: (context, _) {
-            return Container(
+            return Material(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.card)),
+              child: Container(
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.card)),
@@ -814,7 +831,8 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   SwitchListTile(
-                    activeColor: AppColors.primary,
+                    activeThumbColor: AppColors.primary,
+                    activeTrackColor: AppColors.primary.withValues(alpha: 0.5),
                     contentPadding: EdgeInsets.zero,
                     title: const Text(
                       'Push Notifications',
@@ -825,7 +843,8 @@ class ProfileScreen extends StatelessWidget {
                     onChanged: (val) => appState.pushNotifications = val,
                   ),
                   SwitchListTile(
-                    activeColor: AppColors.primary,
+                    activeThumbColor: AppColors.primary,
+                    activeTrackColor: AppColors.primary.withValues(alpha: 0.5),
                     contentPadding: EdgeInsets.zero,
                     title: const Text(
                       'Email Notifications',
@@ -836,7 +855,8 @@ class ProfileScreen extends StatelessWidget {
                     onChanged: (val) => appState.emailNotifications = val,
                   ),
                   SwitchListTile(
-                    activeColor: AppColors.primary,
+                    activeThumbColor: AppColors.primary,
+                    activeTrackColor: AppColors.primary.withValues(alpha: 0.5),
                     contentPadding: EdgeInsets.zero,
                     title: const Text(
                       'Weekly Analysis Reports',
@@ -849,7 +869,8 @@ class ProfileScreen extends StatelessWidget {
                   const SizedBox(height: 16),
                 ],
               ),
-            );
+            ), // end Container
+            ); // end Material
           },
         );
       },
@@ -864,7 +885,10 @@ class ProfileScreen extends StatelessWidget {
         return ListenableBuilder(
           listenable: appState,
           builder: (context, _) {
-            return Container(
+            return Material(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.card)),
+              child: Container(
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.card)),
@@ -906,7 +930,8 @@ class ProfileScreen extends StatelessWidget {
                   const Divider(color: AppColors.secondaryBg, thickness: 1.5),
 
                   SwitchListTile(
-                    activeColor: AppColors.primary,
+                    activeThumbColor: AppColors.primary,
+                    activeTrackColor: AppColors.primary.withValues(alpha: 0.5),
                     contentPadding: EdgeInsets.zero,
                     title: const Text(
                       'Auto-Sync on Wi-Fi',
@@ -966,7 +991,8 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 ],
               ),
-            );
+            ), // end Container
+            ); // end Material
           },
         );
       },
@@ -1213,7 +1239,9 @@ class _FAQTileState extends State<FAQTile> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Material(
+      color: Colors.transparent,
+      child: Container(
       margin: const EdgeInsets.symmetric(vertical: 6.0),
       decoration: BoxDecoration(
         color: AppColors.secondaryBg,
@@ -1254,6 +1282,7 @@ class _FAQTileState extends State<FAQTile> {
             ),
         ],
       ),
-    );
+    ), // end Container
+    ); // end Material
   }
 }

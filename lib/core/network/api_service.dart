@@ -250,11 +250,44 @@ class ApiService {
 
       if (response.statusCode == 200) {
         return json.decode(response.body) as Map<String, dynamic>;
+      } else if (response.statusCode == 404) {
+        return null;
       } else {
         throw Exception(_parseError(response.body, 'Failed to fetch profile'));
       }
     } catch (e) {
       throw Exception(e.toString().replaceAll('Exception: ', ''));
+    }
+  }
+
+  /// Calls GET /auth/profile with Authorization token and returns HTTP status & data map.
+  static Future<Map<String, dynamic>> getProfileWithStatus() async {
+    final url = Uri.parse('$baseUrl/auth/profile');
+    final token = await getToken();
+    if (token == null) {
+      throw Exception('User is not authenticated. Please log in.');
+    }
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+        'ngrok-skip-browser-warning': 'true',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return {
+        'statusCode': 200,
+        'data': json.decode(response.body) as Map<String, dynamic>,
+      };
+    } else if (response.statusCode == 404) {
+      return {
+        'statusCode': 404,
+        'data': null,
+      };
+    } else {
+      throw Exception(_parseError(response.body, 'Failed to fetch profile'));
     }
   }
 
