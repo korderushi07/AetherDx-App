@@ -98,6 +98,7 @@ class _AnalyzingNailScreenState extends State<AnalyzingNailScreen> {
     final apiFuture = ApiService.predictNail(
       widget.imagePath,
       imageBytes: widget.imageBytes,
+      generateXai: true,
     );
 
     // Step 2: AI Scanning (animated scan line, non-looping after 2s)
@@ -113,6 +114,7 @@ class _AnalyzingNailScreenState extends State<AnalyzingNailScreen> {
       final response = await apiFuture;
       final predictedClass = response['predicted_class'] as String?;
       final confidence = (response['confidence'] as num?)?.toDouble() ?? 0.0;
+      final gradcamOverlay = response['gradcam_overlay'] as String?;
 
       // Quality Warning Case: If confidence is too low (< 70%), route directly to alert screen
       if (confidence < 0.70) {
@@ -126,6 +128,7 @@ class _AnalyzingNailScreenState extends State<AnalyzingNailScreen> {
 
       // Populate prediction details
       _predictionResult = _mapModelResult(predictedClass ?? 'Healthy', confidence);
+      _predictionResult!['gradcam_overlay'] = gradcamOverlay;
 
       // Finish progress animation (move progress value to 100%)
       if (mounted) {
@@ -519,6 +522,9 @@ class _AnalyzingNailScreenState extends State<AnalyzingNailScreen> {
                             keySigns: _predictionResult!['keySigns'],
                             nextSteps: _predictionResult!['nextSteps'],
                             careTips: _predictionResult!['careTips'],
+                            imagePath: widget.imagePath,
+                            imageBytes: widget.imageBytes,
+                            gradcamOverlay: _predictionResult!['gradcam_overlay'],
                           ),
                         ),
                       );

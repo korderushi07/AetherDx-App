@@ -112,8 +112,9 @@ class ApiService {
   static Future<Map<String, dynamic>> predictNail(
     String imagePath, {
     Uint8List? imageBytes,
+    bool generateXai = false,
   }) async {
-    final url = Uri.parse('$baseUrl/nail/predict');
+    final url = Uri.parse('$baseUrl/nail/predict${generateXai ? '?generate_xai=true' : ''}');
     try {
       final token = await getToken();
       if (token == null) {

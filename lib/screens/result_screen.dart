@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -25,6 +26,9 @@ class ResultScreen extends StatelessWidget {
   final String keySigns;
   final String nextSteps;
   final String careTips;
+  final String? imagePath;
+  final Uint8List? imageBytes;
+  final String? gradcamOverlay;
 
   const ResultScreen({
     super.key,
@@ -35,6 +39,9 @@ class ResultScreen extends StatelessWidget {
     this.keySigns = 'Pitting, discoloration, rough texture, and nail thickening',
     this.nextSteps = 'Consult a dermatologist for proper diagnosis and treatment',
     this.careTips = 'Keep nails moisturized, avoid trauma, and manage stress',
+    this.imagePath,
+    this.imageBytes,
+    this.gradcamOverlay,
   });
 
   @override
@@ -232,6 +239,14 @@ class ResultScreen extends StatelessWidget {
                                     height: 1.4,
                                   ),
                                 ),
+                                if (gradcamOverlay != null && gradcamOverlay!.isNotEmpty) ...[
+                                  const SizedBox(height: 20),
+                                  ImageEvidenceSection(
+                                    imagePath: imagePath,
+                                    imageBytes: imageBytes,
+                                    gradcamOverlay: gradcamOverlay!,
+                                  ),
+                                ],
                                 const SizedBox(height: 12),
                                 Row(
                                   children: [
@@ -1022,5 +1037,253 @@ class ResultScreen extends StatelessWidget {
     final file = File('${output.path}/AetherDx_Report_${DateTime.now().millisecondsSinceEpoch}.pdf');
     await file.writeAsBytes(await pdf.save());
     await OpenFile.open(file.path);
+  }
+}
+
+class ImageEvidenceSection extends StatefulWidget {
+  final String? imagePath;
+  final Uint8List? imageBytes;
+  final String gradcamOverlay;
+
+  const ImageEvidenceSection({
+    super.key,
+    this.imagePath,
+    this.imageBytes,
+    required this.gradcamOverlay,
+  });
+
+  @override
+  State<ImageEvidenceSection> createState() => _ImageEvidenceSectionState();
+}
+
+class _ImageEvidenceSectionState extends State<ImageEvidenceSection> {
+  int _selectedTab = 0; // 0 = Original, 1 = Heatmap Evidence
+
+  Widget _buildOriginalImage() {
+    if (widget.imageBytes != null) {
+      return Image.memory(
+        widget.imageBytes!,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
+      );
+    } else if (widget.imagePath != null && widget.imagePath!.isNotEmpty) {
+      return Image.file(
+        File(widget.imagePath!),
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
+      );
+    } else {
+      return Container(
+        color: const Color(0xFFF1F5F9),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.image_not_supported_outlined,
+                color: AppColors.textSecondary,
+                size: 32,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Original image not available'.tr(),
+                style: AppTypography.caption,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+  }
+
+  Widget _buildHeatmapImage() {
+    try {
+      final String base64Str = widget.gradcamOverlay.split(',')[1];
+      final Uint8List decodedBytes = base64Decode(base64Str);
+      return Image.memory(
+        decodedBytes,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        height: double.infinity,
+      );
+    } catch (e) {
+      return Container(
+        color: const Color(0xFFF1F5F9),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.broken_image_outlined,
+                color: AppColors.error,
+                size: 32,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Failed to load heatmap evidence'.tr(),
+                style: AppTypography.caption.copyWith(color: AppColors.error),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'AI Analysis Evidence'.tr(),
+          style: AppTypography.cardTitle,
+        ),
+        const SizedBox(height: 12),
+        // Custom Segment Control
+        Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFFF1F5F9),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: const EdgeInsets.all(4),
+          child: Row(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _selectedTab = 0;
+                    });
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    decoration: BoxDecoration(
+                      color: _selectedTab == 0 ? Colors.white : Colors.transparent,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: _selectedTab == 0
+                          ? [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.05),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              )
+                            ]
+                          : [],
+                    ),
+                    child: Center(
+                      child: Text(
+                        'Original'.tr(),
+                        style: TextStyle(
+                          color: _selectedTab == 0 ? AppColors.primary : AppColors.textSecondary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _selectedTab = 1;
+                    });
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    decoration: BoxDecoration(
+                      color: _selectedTab == 1 ? Colors.white : Colors.transparent,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: _selectedTab == 1
+                          ? [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.05),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              )
+                            ]
+                          : [],
+                    ),
+                    child: Center(
+                      child: Text(
+                        'Heatmap Evidence'.tr(),
+                        style: TextStyle(
+                          color: _selectedTab == 1 ? AppColors.primary : AppColors.textSecondary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        // Image Viewer
+        Container(
+          height: 220,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: const Color(0xFFE2E8F0)),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(11),
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 200),
+                    child: _selectedTab == 0
+                        ? KeyedSubtree(
+                            key: const ValueKey('original'),
+                            child: _buildOriginalImage(),
+                          )
+                        : KeyedSubtree(
+                            key: const ValueKey('heatmap'),
+                            child: _buildHeatmapImage(),
+                          ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        if (_selectedTab == 1) ...[
+          const SizedBox(height: 8),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(top: 2.0),
+                child: Icon(
+                  Icons.info_outline_rounded,
+                  color: AppColors.primary,
+                  size: 14,
+                ),
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  "The highlighted regions indicate the areas of the nail that contributed most strongly to the AI's prediction.".tr(),
+                  style: AppTypography.caption.copyWith(
+                    color: AppColors.textSecondary,
+                    height: 1.3,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ],
+    );
   }
 }
